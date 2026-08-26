@@ -1,4 +1,12 @@
+<div align="center">
+
 # GATE-MCP
+
+![GATE-MCP](docs/social-preview.png)
+
+**Guided Agent Through Enforcement MCP** — an MCP server that enforces GAIN-Coding workflow gates as code.
+
+</div>
 
 GATE-MCP is an MCP (Model Context Protocol) server that enforces GAIN-Coding workflow gates as code — guiding the agent through reviewed, policy-compliant interactions and keeping it anchored in traditional engineering discipline. It is the active, machine-driven companion to GAIN-Coding: where GAIN-Coding is the canonical workflow specification written for the agent to read through progressive context loading, GATE-MCP holds its own machine-oriented spec (YAML per workflow) that mirrors the GAIN-Coding document structure, and does not parse that markdown at runtime.
 
