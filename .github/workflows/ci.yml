@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check line endings
+        run: |
+          if grep -rlP '\r$' --include="*.md" .; then
+            echo "::error::CRLF line endings found in markdown files"
+            exit 1
+          fi
+      - name: Check no BOM
+        run: |
+          if grep -rlU $'\xEF\xBB\xBF' --include="*.md" .; then
+            echo "::error::UTF-8 BOM found in markdown files"
+            exit 1
+          fi
