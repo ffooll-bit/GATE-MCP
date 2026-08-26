@@ -1,0 +1,24 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Temporary work folder
+temp/
+
+# Local scratch
+*.log
+*.tmp
