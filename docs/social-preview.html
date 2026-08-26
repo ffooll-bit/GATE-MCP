@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GATE-MCP Social Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #060912;
+    --mantle: #0e1422;
+    --surface: #141b2c;
+    --surface1: #1f2a40;
+    --border: #1f2a40;
+    --text: #eef1f8;
+    --text-muted: #9aa6c2;
+    --accent: #8b5cf6;
+    --cyan: #22d3ee;
+    --green: #4ade80;
+    --yellow: #facc15;
+    --red: #f87171;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    --font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+  }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body {
+    font-family: var(--font);
+    background:
+      radial-gradient(1200px 620px at 72% 18%, rgba(139, 92, 246, 0.12), transparent 60%),
+      var(--bg);
+    color: var(--text);
+  }
+
+  .frame {
+    width: 1280px;
+    height: 640px;
+    padding: 53px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+  }
+
+  /* ── Left: branding ── */
+  .brand { flex: 0 0 520px; }
+  .logo-row { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
+  .logo {
+    width: 64px; height: 64px; flex-shrink: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.38);
+  }
+  .logo svg { width: 36px; height: 36px; }
+  .logo-cap {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    line-height: 1.08;
+  }
+  .subtitle {
+    margin-top: 8px;
+    font-size: 19px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .desc {
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+    opacity: 0.92;
+    max-width: 500px;
+  }
+  .chips { margin-top: 26px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    padding: 8px 16px;
+    border: 1px solid var(--surface1);
+    border-radius: 999px;
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.4px;
+  }
+
+  /* ── Right: mock MCP session window ── */
+  .mock { flex: 1; min-width: 0; }
+  .window {
+    background: var(--mantle);
+    border: 1px solid var(--surface1);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  }
+  .win-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #f87171; }
+  .dot-y { background: #facc15; }
+  .dot-g { background: #4ade80; }
+  .win-url {
+    flex: 1;
+    margin-left: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+  .term-body {
+    padding: 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .user { color: var(--cyan); }
+  .agent { color: var(--accent); }
+  .gate { color: var(--accent); }
+  .cmd { color: var(--text); }
+  .ok { color: var(--green); }
+  .pass { color: var(--green); font-weight: 600; }
+  .dim { color: var(--text-muted); }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.3px;
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="main">
+      <div class="brand">
+        <div class="logo-row">
+          <div class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 0.7 V2.1" stroke="#eef1f8" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="0.9" r="0.9" fill="#eef1f8"/>
+              <path fill-rule="evenodd" d="M5.2 6.3 C5.2 4.6 6.6 3.2 8.3 3.2 H15.7 C17.4 3.2 18.8 4.6 18.8 6.3 V8.6 C18.8 10.3 17.4 11.7 15.7 11.7 H8.3 C6.6 11.7 5.2 10.3 5.2 8.6 Z M7.9 6.6 C7.9 5.7 8.7 4.9 9.6 4.9 H14.4 C15.3 4.9 16.1 5.7 16.1 6.6 V8.2 C16.1 9.1 15.3 9.9 14.4 9.9 H9.6 C8.7 9.9 7.9 9.1 7.9 8.2 Z" fill="#eef1f8"/>
+              <rect x="9.4" y="5.9" width="1.4" height="2.4" rx="0.7" fill="#eef1f8"/>
+              <rect x="13.4" y="5.9" width="1.4" height="2.4" rx="0.7" fill="#eef1f8"/>
+              <circle cx="3.5" cy="7.2" r="1.1" fill="#eef1f8"/>
+              <circle cx="20.5" cy="7.2" r="1.1" fill="#eef1f8"/>
+              <path d="M7.3 17.2 L4.4 15.6" stroke="#eef1f8" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M16.7 17.2 L19.6 15.6" stroke="#eef1f8" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="2.7" cy="14.9" r="1.9" fill="none" stroke="#eef1f8" stroke-width="2.4"/>
+              <circle cx="21.3" cy="14.9" r="1.9" fill="none" stroke="#eef1f8" stroke-width="2.4"/>
+              <path d="M7.2 13.5 L16.8 13.5 C18.4 13.6 19.2 14.9 19 16.7 C18.8 18.5 17.4 21.4 12 22.4 C6.6 21.4 5.2 18.5 5 16.7 C4.8 14.9 5.6 13.6 7.2 13.5 Z" fill="#eef1f8"/>
+            </svg>
+          </div>
+          <span class="logo-cap">GATE-MCP</span>
+        </div>
+        <h1>GATE-MCP</h1>
+        <div class="subtitle">Guided Agent Through Enforcement MCP</div>
+        <p class="desc">Enforces GAIN-Coding workflow gates as code</p>
+        <div class="chips">
+          <span class="chip">mcp</span>
+          <span class="chip">python</span>
+          <span class="chip">gain-coding</span>
+          <span class="chip">stdio</span>
+        </div>
+      </div>
+
+      <div class="mock">
+        <div class="window">
+          <div class="win-bar">
+            <span class="dot dot-r"></span>
+            <span class="dot dot-y"></span>
+            <span class="dot dot-g"></span>
+            <span class="win-url">gate-mcp · stdio</span>
+          </div>
+          <div class="term-body">
+            <div><span class="user">client</span> <span class="cmd">&rarr; initialize()</span></div>
+            <div><span class="agent">agent</span> <span class="cmd">load GAIN-Coding policies</span> <span class="ok">OK</span></div>
+            <div><span class="agent">agent</span> <span class="cmd">enforce findings-and-planning</span></div>
+            <div><span class="gate">gate</span> <span class="pass">&rarr; reviewed, policy-compliant</span> <span class="ok">&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>ffooll-bit / GATE-MCP</span>
+      <span>MIT &middot; Guided Agent Through Enforcement MCP</span>
+    </div>
+  </div>
+</body>
+</html>
