@@ -36,7 +36,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-001 — Repository structure not verified against the standard
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #4
 - **Recorded:** YYYY-MM-DD HH:MM
 - **Implemented:** `—`
 - **Problem:** The repository is newly created and its folders, guardrail files, and settings have not yet been confirmed against the workflow standard.
@@ -48,7 +48,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-002 — Implement findings-and-planning vertical slice (core enforcement)
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #5
 - **Recorded:** 2026-08-30 02:37
 - **Implemented:** `—`
 - **Problem:** `server.py` is still a skeleton (`FastMCP` + `mcp.run()`) with no tools or gate logic, so GATE-MCP cannot enforce any GAIN-Coding workflow and is not yet usable.
@@ -60,7 +60,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### DOC-001 — Create machine-oriented YAML spec `specs/workflows/findings-and-planning.yaml`
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #6
 - **Recorded:** 2026-08-30 02:37
 - **Implemented:** `—`
 - **Problem:** `specs/` is empty (only `.gitkeep`); the server has no rule source to enforce, although the README states it loads one YAML spec per workflow/policy.
@@ -72,7 +72,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-003 — Add tests for validator and spec loader
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #7
 - **Recorded:** 2026-08-30 02:37
 - **Implemented:** `—`
 - **Problem:** `tests/` is empty; there is no automated verification that enforcement and the tracker stay valid.
