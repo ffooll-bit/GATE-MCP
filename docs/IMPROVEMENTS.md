@@ -143,16 +143,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Running pip wheel . (or any source/wheel build) no longer surfaces an untracked build/ directory in git status; dist/ is also ignored for future packaging output.
 
 ### ENH-009 — Wheel does not bundle specs/ so a standalone install cannot operate
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #25
 - **Recorded:** 2026-09-01 11:28
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 12:25
 - **Problem:** pip wheel produces gate_mcp-0.1.0-py3-none-any.whl that ships only the Python modules; specs/ and docs/ are absent. A standalone pip install gate_mcp boots and registers all 5 tools but every workflow tool fails with "workflows spec not found: specs/workflows/findings-and-planning.yaml"; TRACKER also resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
 - **Possible Fix:** Bundle specs/ (and optionally a default docs/) in the wheel via pyproject package-data/data_files so a standalone install locates its spec and tracker; otherwise document "run from a repo checkout" as an explicit limitation.
 - **Actual Fix:** Verified by building the wheel and installing it in a clean venv: the wheel contains only the four Python modules, with no specs/ or docs/. A standalone install registers all 5 tools but record_finding returns 'workflows spec not found: specs/workflows/findings-and-planning.yaml' and TRACKER resolves to a nonexistent site-packages path. Fix: ship specs/ (and optionally docs/) via pyproject package-data/data_files, or document a run-from-repo limitation.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Decided (with the user) to keep `specs/` at the repo root as a reviewable policy document rather than move it inside the package: specs are policy documents that mirror GAIN-Coding playbook, and the standalone case is already handled by the `GATE_MCP_REPO` env override from ENH-011 (spec_loader/tracker_validator both honor it). No packaging changes were made; the wheel intentionally does not bundle specs/docs. Documented the standalone limitation in README ("Standalone vs. repo-checkout operation") explaining that full operation requires a repo checkout or `GATE_MCP_REPO` pointing at one.
+- **Changes:** README.md gained a "Standalone vs. repo-checkout operation" section documenting that workflow tools resolve specs/ and docs/IMPROVEMENTS.md from a repo checkout or via `GATE_MCP_REPO`; no source or packaging changes, so the wheel keeps not bundling specs as a deliberate, documented limitation.
 
 ### ENH-010 — First MCP stdio tool call can intermittently return an empty content node on Windows
 - **Status:** `verified`

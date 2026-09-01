@@ -16,6 +16,7 @@
 - Track `ARCHITECTURE.md` and `STRUCTURE.md` as project design documents and gitignore the machine-local `.cortexkit/` and `.playwright-mcp/` tooling artifacts (#14)
 - Gitignore the `build/` and `dist/` directories produced by packaging (#20)
 - Support a `GATE_MCP_REPO` environment variable to override the tracker and spec locations off the package-relative default (#27)
+- Document in the README that standalone operation requires a repo checkout or `GATE_MCP_REPO` pointing at one, since the wheel intentionally does not bundle the `specs/` or `docs/IMPROVEMENTS.md` (#25)
 
 ### Fixed
 
