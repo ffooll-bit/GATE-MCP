@@ -12,6 +12,7 @@
 
 - Run the Python checks in CI (`ruff check`, `ruff format --check`, and `pytest`) on every push and pull request via a new `test` job (#13)
 - Track `ARCHITECTURE.md` and `STRUCTURE.md` as project design documents and gitignore the machine-local `.cortexkit/` and `.playwright-mcp/` tooling artifacts (#14)
+- Gitignore the `build/` and `dist/` directories produced by packaging (#20)
 
 ### Fixed
 

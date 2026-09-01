@@ -131,13 +131,13 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-008 — `build/` directory from pip wheel is not gitignored
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #20
 - **Recorded:** 2026-09-01 10:35
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 10:50
 - **Problem:** Running `pip wheel .` (or a source/wheel build) produces a `build/` directory, but .gitignore only ignores `__pycache__/` and `*.egg-info/`, so the build artifact appears as an untracked entry in git status and risks being committed.
 - **Possible Fix:** Add `build/`, `dist/`, and `*.egg-info/` to .gitignore.
 - **Actual Fix:** Confirmed: `.gitignore` ignores `__pycache__/`, `*.egg-info/`, `.venv/`, `venv/`, `temp/` but not `build/` or `dist/`, so `pip wheel .` leaves an un-ignored `build/` artifact. Fix: add `build/`, `dist/`, and `*.egg-info/` to `.gitignore`.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added build/ and dist/ to the Python section of .gitignore so packaging build artifacts no longer appear as untracked entries in git status.
+- **Changes:** Running pip wheel . (or any source/wheel build) no longer surfaces an untracked build/ directory in git status; dist/ is also ignored for future packaging output.
