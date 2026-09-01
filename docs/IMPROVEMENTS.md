@@ -179,16 +179,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Operators can now point the server's tracker and spec locations at an arbitrary repo root by setting GATE_MCP_REPO, instead of relying on the package-relative default; behaviour is unchanged when the variable is unset.
 
 ### ENH-012 — Agent edits the tracker file directly for Issue sync instead of using an MCP tool
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #28
 - **Recorded:** 2026-09-01 11:40
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 13:09
 - **Problem:** During Interaction 3 (Create GitHub Issues and sync), the tracker Issue fields were updated by directly editing docs/IMPROVEMENTS.md instead of through an MCP tool. GATE-MCP provides record_finding/verify_finding/deliver_finding tools, so mutating the tracker by hand is inconsistent and bypasses the project's own enforcement.
 - **Possible Fix:** Add an MCP tool (e.g. sync_issue or an extended record_finding) that updates the tracker Issue field, and require the agent to perform ALL tracker mutations through MCP tools instead of editing docs/IMPROVEMENTS.md directly.
 - **Actual Fix:** Verified by observation: during Interaction 3 the Issue fields were updated by directly editing docs/IMPROVEMENTS.md with the edit tool, and server.py exposes only the five tools (record/verify/sync/archive/deliver) with no sync_issue tool. Confirm the agent must route every tracker mutation through an MCP tool; add a sync_issue tool (or extend the workflow) so sync no longer needs manual edits.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added a sync_issue(item_id, issue) MCP tool to server.py that updates the Issue field of a tracked item, so linking GitHub issues to tracker items no longer requires hand-editing docs/IMPROVEMENTS.md, plus three protocol-level pytest cases (success, missing item, invalid reference format).
+- **Changes:** Server now exposes an eighth MCP tool sync_issue(item_id, issue). Agents route issue-reference mutations through GATE-MCP instead of direct file edits, closing the manual-edit gap for the Create Issues interaction of the findings-and-planning workflow.
 
 ### ENH-013 — Agent writes GitHub issue bodies directly instead of through a GATE-MCP tool
 - **Status:** `verified`

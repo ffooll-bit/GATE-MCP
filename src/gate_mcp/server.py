@@ -152,6 +152,28 @@ def reject_finding(item_id: str, rejection_reason: str) -> dict:
 
 
 @mcp.tool()
+def sync_issue(item_id: str, issue: str) -> dict:
+    """Sync the GitHub Issue number on a tracked item.
+
+    Updates the Issue field of the item (e.g. '#28') so the agent never edits
+    the tracker by hand when linking issues.
+    """
+    import re as _re
+
+    if not _re.fullmatch(r"#\d+", issue):
+        return {"ok": False, "error": f"invalid issue reference: {issue!r}"}
+    try:
+        text = read_tracker()
+        text = _replace_item_field(text, item_id, "Issue", issue)
+        write_tracker(text)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    except OSError as exc:
+        return {"ok": False, "error": f"tracker write failed: {exc}"}
+    return {"ok": True, "message": f"{item_id} Issue set to {issue}"}
+
+
+@mcp.tool()
 def sync_tracker() -> dict:
     """Validate docs/IMPROVEMENTS.md and reorder items to canonical form."""
     try:
