@@ -71,13 +71,13 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Server can now load machine-readable workflow rules from `specs/workflows/findings-and-planning.yaml` (data file only; loading logic belongs to ENH-002).
 
 ### ENH-003 — Add tests for validator and spec loader
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #7
 - **Recorded:** 2026-08-30 02:37
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 10:05
 - **Problem:** `tests/` is empty; there is no automated verification that enforcement and the tracker stay valid.
 - **Possible Fix:** Add pytest coverage for the spec loader and the `IMPROVEMENTS.md` validator (format, numbering, gate rules).
 - **Actual Fix:** `Verified — tests/ confirmed empty; the proposed fix (pytest for validator + spec loader) is the correct approach.`
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added `tests/test_spec_loader.py` (loads the real findings-and-planning spec; `SpecError` for missing spec, name mismatch, and missing required keys) and `tests/test_tracker_validator.py` (parse, format, numbering gap/duplicate, and gate-rule validation). Separated the `spec_loader`/`tracker_validator_as_tv` imports to satisfy ruff. Removed `tests/.gitkeep`. 14 pytest cases pass.
+- **Changes:** The tracker validator and spec loader now have automated regression coverage that runs with `pytest`; `tests/` is no longer empty.
