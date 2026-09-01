@@ -37,6 +37,16 @@ gate-mcp
 
 Both the `gate-mcp` console script and `python -m gate_mcp` start the server over stdio.
 
+### Standalone vs. repo-checkout operation
+
+The workflow specs live in the repository (`specs/`), not inside the installed wheel, and the tracker (`docs/IMPROVEMENTS.md`) is a working document that mutates as items pass through the gates. For the tools to resolve the specs and tracker, run the server from a GATE-MCP repo checkout (editable install), or point a standalone installation at a checkout by setting `GATE_MCP_REPO` to that checkout's root:
+
+```bash
+GATE_MCP_REPO=/path/to/gate-mcp gate-mcp
+```
+
+Without a repo checkout or `GATE_MCP_REPO`, a standalone `pip install` can start the server and list the tools, but the workflow tools will fail to locate the specs and tracker.
+
 ## Documentation
 
 - [CHANGELOG.md](CHANGELOG.md) — release history
