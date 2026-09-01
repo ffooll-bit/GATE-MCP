@@ -59,16 +59,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### DOC-001 — Create machine-oriented YAML spec `specs/workflows/findings-and-planning.yaml`
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #6
 - **Recorded:** 2026-08-30 02:37
-- **Implemented:** `—`
+- **Implemented:** 2026-08-31 21:55
 - **Problem:** `specs/` is empty (only `.gitkeep`); the server has no rule source to enforce, although the README states it loads one YAML spec per workflow/policy.
 - **Possible Fix:** Write a YAML spec that mirrors the GAIN-Coding `findings-and-planning.md` structure (interactions, fields, gates) as the server's input. Dependency of ENH-002.
 - **Actual Fix:** `Verified — specs/ confirmed empty; the proposed fix (YAML spec mirroring findings-and-planning.md) is the correct approach.`
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Created `specs/workflows/findings-and-planning.yaml` mirroring the GAIN-Coding `findings-and-planning.md` workflow structure (5 interactions, field definitions, gate rules, merge strategy). Removed `specs/workflows/.gitkeep`.
+- **Changes:** Server can now load machine-readable workflow rules from `specs/workflows/findings-and-planning.yaml` (data file only; loading logic belongs to ENH-002).
 
 ### ENH-003 — Add tests for validator and spec loader
 - **Status:** `verified`

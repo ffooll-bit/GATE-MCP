@@ -4,7 +4,7 @@
 
 ### Added
 
-- _New features, one line each, referencing the issue if applicable._
+- Machine-readable workflow spec `specs/workflows/findings-and-planning.yaml` mirroring GAIN-CODING findings-and-planning.md (#6)
 
 ### Changed
 

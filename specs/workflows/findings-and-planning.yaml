@@ -1,0 +1,134 @@
+# GATE-MCP workflow spec: Findings and Planning
+# Machine-readable mirror of GAIN-CODING playbook/workflow/findings-and-planning.md
+# Source: https://raw.githubusercontent.com/ffooll-bit/GAIN-CODING/main/playbook/workflow/findings-and-planning.md
+
+workflow:
+  name: findings-and-planning
+  description: Record, verify, track, and deliver improvement ideas in docs/IMPROVEMENTS.md
+  source: https://raw.githubusercontent.com/ffooll-bit/GAIN-CODING/main/playbook/workflow/findings-and-planning.md
+  working_branch: docs/improvements
+
+fields:
+  id:
+    format: "<LABEL_CODE>-<NNN>"
+    numbering: local_to_tracker
+    restart_after_archive: true
+    label_codes:
+      BUG: bug
+      DOC: documentation
+      ENH: enhancement
+      DUP: duplicate
+      GFI: good first issue
+      HW: help wanted
+      INV: invalid
+      QST: question
+      WFX: wontfix
+
+  status:
+    values: [recorded, verified, rejected, implemented]
+
+  issue:
+    description: Global GitHub number (Issues and PRs share one ever-increasing sequence); never derived or guessed from the tracker ID.
+
+  recorded:
+    format: "YYYY-MM-DD HH:MM"
+
+  implemented:
+    format: "YYYY-MM-DD HH:MM"
+
+  problem:
+    description: The finding as application behavior when possible; for non-application items (CI, settings, tooling), the impact instead.
+
+  possible_fix:
+    description: Initial fix plan, written while still recorded, not guaranteed to work.
+
+  actual_fix:
+    description: Final fix plan confirmed during verification (verified items only); filled by the Verify interaction.
+
+  rejection_reason:
+    description: Why the item was rejected (rejected items only).
+
+  actual_implemented:
+    description: What was actually changed during implementation.
+
+  changes:
+    description: Behavior changes resulting from implementation.
+
+interactions:
+  - id: record
+    title: Record the idea or finding
+    mode: plan_then_build
+    gates: [plan_to_build, pre_commit]
+    description: AGENT rewrites idea in own words for confirmation (repeats until USER confident); on build, appends item at bottom of Items section.
+    fields_set:
+      - id
+      - status
+      - recorded
+      - problem
+      - possible_fix
+    status_value: recorded
+
+  - id: verify
+    title: Verify the recorded items
+    mode: plan_then_build
+    gates: [plan_to_build, pre_commit]
+    description: AGENT verifies each recorded item (code + online verification); plan mode is fundamentally read-only.
+    verification:
+      methods: [code_verification, online_verification]
+    outcomes:
+      verified:
+        fields_changed: [status, actual_fix]
+        status_value: verified
+      rejected:
+        fields_changed: [status, rejection_reason]
+        status_value: rejected
+
+  - id: create_issues
+    title: Create GitHub Issues, close invalid ones, and keep the tracker in sync
+    mode: plan_then_build
+    gates: [plan_to_build, pre_commit]
+    description: Open one Issue per verified item (label = only type marker, plain title, full body, no ID ref); close open Issues per rejected items; sync contributor-opened Issues.
+    actions:
+      - open_issue_per_verified
+      - close_issue_per_rejected_with_open_issue
+      - sync_contributor_opened_issues
+    fields_changed: [issue]
+    new_items_for: unmatched_open_issues
+
+  - id: archive
+    title: Archive the tracker
+    mode: plan_then_build
+    gates: [plan_to_build, pre_commit]
+    description: Allowed only when ALL items are finished (rejected or implemented); copies tracker to docs/archived/ and recreates from template.
+    precondition:
+      all_items_finished: true
+    actions:
+      - copy_to_archived
+      - recreate_from_template
+    fields_changed: []
+
+  - id: deliver
+    title: Deliver the updates through a pull request
+    mode: plan_then_build
+    gates: [plan_to_build]
+    description: Push working branch, open PR to main, wait green CI, merge, cleanup; selectable at any time; omits Related issues/Fixes section.
+    selectable: true
+    actions:
+      - push_branch
+      - open_pr
+      - wait_green_ci
+      - merge
+      - cleanup
+    pr_notes: omit_related_issues_section
+    merge_strategy:
+      single_commit: squash
+      multi_commit_single_author: rebase
+    fields_changed: []
+
+gates:
+  plan_to_build:
+    description: AGENT presents plan and waits for USER approval before executing.
+  pre_commit:
+    description: AGENT presents result and waits for USER approval before committing.
+  single_plan_mode:
+    description: Read-only interactions (archive precondition check) use this single gate instead of plan_to_build + pre_commit.
