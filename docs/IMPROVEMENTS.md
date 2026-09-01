@@ -105,3 +105,39 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Rejection Reason:** `—`
 - **Actual Implemented:** Added `.cortexkit/` and `.playwright-mcp/` to `.gitignore` so the machine-local tooling artifacts are no longer reported as untracked. Tracked `ARCHITECTURE.md` and `STRUCTURE.md` as project design documents. Both documents already described the implemented state (the spec loader, tracker validator, five MCP tools, and test suite were listed as existing), so no "planned / to be created" references needed to be rewritten; the only refinement was removing `.cortexkit/` and `.playwright-mcp/` from the `STRUCTURE.md` directory tree so it matches their now-ignored tooling status.
 - **Changes:** `git status` no longer reports `.cortexkit/`, `.playwright-mcp/`, `ARCHITECTURE.md`, or `STRUCTURE.md` as untracked. The repository now carries its architecture and structure design documents in version control while machine-local tooling stays out of the public repo.
+
+### ENH-006 — Documented `python -m gate_mcp` run command fails (no __main__.py)
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 10:35
+- **Implemented:** `—`
+- **Problem:** README.md, ARCHITECTURE.md, and STRUCTURE.md all instruct running the server with `python -m gate_mcp`, but the command fails with `No module named gate_mcp.__main__` because the package has no `src/gate_mcp/__main__.py`. The working entry points are the `gate-mcp` console script or `python -c "from gate_mcp.server import main; main()"`. A user following the published README therefore cannot start the server.
+- **Possible Fix:** Add `src/gate_mcp/__main__.py` that calls `main()` from server.py so `python -m gate_mcp` works, and align README/ARCHITECTURE/STRUCTURE with the correct entry point. Verify end-to-end.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-007 — No automated test coverage for the five MCP tools
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 10:35
+- **Implemented:** `—`
+- **Problem:** The 14 unit tests only cover spec_loader and tracker_validator; the five MCP tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding) in server.py have no automated coverage. The end-to-end harness written during stability testing proves they work, but it lives in temp/ (gitignored) and does not run in CI, so a regression in server.py would not turn CI red.
+- **Possible Fix:** Add tests/test_server.py that calls the tool functions against a temporary tracker (monkeypatching read_tracker/write_tracker), covering record, verify, sync, archive, deliver and error cases (unknown label, missing item, archive refusal); or fold the end-to-end harness into the suite CI runs.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-008 — `build/` directory from pip wheel is not gitignored
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 10:35
+- **Implemented:** `—`
+- **Problem:** Running `pip wheel .` (or a source/wheel build) produces a `build/` directory, but .gitignore only ignores `__pycache__/` and `*.egg-info/`, so the build artifact appears as an untracked entry in git status and risks being committed.
+- **Possible Fix:** Add `build/`, `dist/`, and `*.egg-info/` to .gitignore.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
