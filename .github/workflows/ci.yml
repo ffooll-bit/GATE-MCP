@@ -34,7 +34,7 @@ jobs:
           python-version: "3.12"
       - name: Install package and tooling
         run: |
-          pip install -e . ruff pytest
+          pip install -e .[dev] ruff pytest
       - name: Lint with ruff
         run: ruff check . --output-format=github
       - name: Check formatting with ruff
