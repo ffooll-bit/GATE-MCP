@@ -167,16 +167,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-011 — TRACKER path is hardcoded from __file__ with no environment override
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #27
 - **Recorded:** 2026-09-01 11:30
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 12:13
 - **Problem:** The MCP stdio server derives TRACKER from __file__ (REPO_ROOT = Path(__file__).resolve().parent.parent.parent), hardcoding it to the package install location with no environment-variable override. This makes safe E2E testing require isolated repo copies and breaks standalone wheel installs, where TRACKER resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
 - **Possible Fix:** Add an environment-variable override for the tracker path (and repo root) so a standalone install or an isolated test can point TRACKER at a file; fall back to the current __file__-derived path when the override is unset. This also fixes the packaging gap where a wheel-installed server cannot resolve its tracker.
 - **Actual Fix:** Verified by source: tracker_validator.py:8-9 hardcodes REPO_ROOT from __file__ and TRACKER as REPO_ROOT/docs/IMPROVEMENTS.md with no environment override anywhere in the package; a wheel-installed server resolves TRACKER to site-packages/Lib/docs/IMPROVEMENTS.md. Fix: add an environment-variable override for the tracker (and repo root), falling back to the __file__-derived path when unset.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added a GATE_MCP_REPO environment-variable override for REPO_ROOT in tracker_validator.py and spec_loader.py (fallback retains the __file__-derived default), so the tracker and specs paths resolve to a caller-chosen repo root. Added two tests proving the override redirects both REPO_ROOT and TRACKER.
+- **Changes:** Operators can now point the server's tracker and spec locations at an arbitrary repo root by setting GATE_MCP_REPO, instead of relying on the package-relative default; behaviour is unchanged when the variable is unset.
 
 ### ENH-012 — Agent edits the tracker file directly for Issue sync instead of using an MCP tool
 - **Status:** `verified`

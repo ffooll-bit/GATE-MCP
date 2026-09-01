@@ -1,5 +1,7 @@
 """Tests for the docs/IMPROVEMENTS.md tracker validator."""
 
+import importlib
+
 from gate_mcp import spec_loader
 from gate_mcp import tracker_validator as tv
 
@@ -96,3 +98,13 @@ def test_status_ok():
         )
     )
     assert tv.validate_gate_rules(_spec(), tv.parse_tracker(text)) == []
+
+
+def test_tracker_env_override(monkeypatch, tmp_path):
+    """GATE_MCP_REPO redirects REPO_ROOT and TRACKER off the __file__ default."""
+    monkeypatch.setenv("GATE_MCP_REPO", str(tmp_path))
+    reloaded = importlib.reload(tv)
+    assert reloaded.REPO_ROOT == tmp_path
+    assert reloaded.TRACKER == tmp_path / "docs" / "IMPROVEMENTS.md"
+    monkeypatch.delenv("GATE_MCP_REPO")
+    importlib.reload(tv)
