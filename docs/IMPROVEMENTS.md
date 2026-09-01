@@ -47,16 +47,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-002 — Implement findings-and-planning vertical slice (core enforcement)
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #5
 - **Recorded:** 2026-08-30 02:37
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 09:34
 - **Problem:** `server.py` is still a skeleton (`FastMCP` + `mcp.run()`) with no tools or gate logic, so GATE-MCP cannot enforce any GAIN-Coding workflow and is not yet usable.
 - **Possible Fix:** Add MCP tools in `server.py` that run the findings-and-planning cycle (record/verify/sync/archive/deliver) plus a `docs/IMPROVEMENTS.md` tracker validator (format + gate rules), loading rules from `specs/`.
 - **Actual Fix:** `Verified — server.py confirmed skeleton (FastMCP + mcp.run()), no gate logic; the proposed fix (MCP tools + IMPROVEMENTS.md validator) is the correct approach.`
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added `src/gate_mcp/spec_loader.py` (loads/caches workflow specs from `specs/`), `src/gate_mcp/tracker_validator.py` (parses `docs/IMPROVEMENTS.md` and validates format, numbering, gate rules against the spec), and 5 MCP tools in `src/gate_mcp/server.py` (`record_finding`, `verify_finding`, `sync_tracker`, `archive_finding`, `deliver_finding`) that run the findings-and-planning cycle against the tracker. Pinned `mcp>=1.0,<2` and added `pyyaml` to `pyproject.toml`.
+- **Changes:** GATE-MCP can now enforce the findings-and-planning workflow as MCP tools operating on `docs/IMPROVEMENTS.md`, with rules loaded from `specs/workflows/findings-and-planning.yaml`.
 
 ### DOC-001 — Create machine-oriented YAML spec `specs/workflows/findings-and-planning.yaml`
 - **Status:** `implemented`
