@@ -81,3 +81,27 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Rejection Reason:** `—`
 - **Actual Implemented:** Added `tests/test_spec_loader.py` (loads the real findings-and-planning spec; `SpecError` for missing spec, name mismatch, and missing required keys) and `tests/test_tracker_validator.py` (parse, format, numbering gap/duplicate, and gate-rule validation). Separated the `spec_loader`/`tracker_validator_as_tv` imports to satisfy ruff. Removed `tests/.gitkeep`. 14 pytest cases pass.
 - **Changes:** The tracker validator and spec loader now have automated regression coverage that runs with `pytest`; `tests/` is no longer empty.
+
+### ENH-004 — CI does not run the Python checks (ruff and pytest)
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 10:00
+- **Implemented:** `—`
+- **Problem:** The CI workflow (`.github/workflows/ci.yml`) only checks CRLF/BOM on `*.md` files; it does not run `ruff` or `pytest`. The findings-and-planning enforcement tools and their test suite are therefore only verified locally, so a Python regression would not turn CI red and the claim that the workflow "can be used without problems" has no automated safety net.
+- **Possible Fix:** Add a Python job to `.github/workflows/ci.yml` that installs the project (`pip install -e .[dev]` or equivalent) and runs `ruff check`, `ruff format --check`, and `pytest` on a Python 3.10+ runner, so the findings-and-planning enforcement stays green in CI.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-005 — Decide whether untracked files are tracked or ignored
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 10:00
+- **Implemented:** `—`
+- **Problem:** Four untracked items pollute `git status`: `.cortexkit/` and `.playwright-mcp/` are machine-local tooling artifacts that should not be committed to the public repo, while `ARCHITECTURE.md` and `STRUCTURE.md` are project design documents that are currently untracked and, if in the repo, must reflect the implemented code rather than the "planned" state.
+- **Possible Fix:** Add `.cortexkit/` and `.playwright-mcp/` to `.gitignore`; track `ARCHITECTURE.md` and `STRUCTURE.md` and update their "planned / to be created" references (spec_loader, tracker_validator, five MCP tools, tests) to the implemented state.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
