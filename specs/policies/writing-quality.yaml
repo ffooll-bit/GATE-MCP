@@ -1,0 +1,39 @@
+# GATE-MCP policy spec: Writing Quality
+# Enforces GAIN-CODING core writing conventions on documents committed to the repo.
+# Deterministic checks (bom, line_ending, trailing_whitespace) are treated as errors.
+# Heuristic checks (hardwrap, language) are treated as warnings: high-signal, but
+# not a substitute for human review.
+
+policy:
+  name: writing-quality
+  description: International English only, no hardwrap, LF line endings, no BOM, no trailing whitespace
+  scope: committed_documents
+
+bom:
+  allowed: none
+  severity: error
+
+line_ending:
+  allowed: lf
+  severity: error
+
+trailing_whitespace:
+  allowed: none
+  severity: error
+
+hardwrap:
+  enabled: true
+  severity: warning
+  description: A paragraph written as one flowing line rather than force-wrapped at a fixed column
+  min_sentence_broken_lines: 2
+  sentence_end_chars: ".?!:;"
+  skip_prefixes: ["#", "-", "*", "|", ">", "```"]
+
+language:
+  enforced: true
+  severity: warning
+  target: international_english
+  non_ascii_severity: error
+  description: Heuristic Indonesian-detection via common function words; non-ASCII (non-Latin script) is a stronger, objective signal
+  indonesian_function_words: [yang, dan, untuk, dengan, pada, saya, kamu, adalah, ini, itu, dari, ke, di, atau, tetapi, karena, tidak, akan, sudah, boleh, mau, jika, kalau, ketika, sesuai, tentang, bahwa, juga, hanya, masih, agar]
+  indonesian_token_ratio_threshold: 0.02

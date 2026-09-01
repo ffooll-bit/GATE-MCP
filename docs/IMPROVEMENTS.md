@@ -203,16 +203,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-014 — GATE-MCP does not enforce writing-quality policies (language, hardwrap)
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #30
 - **Recorded:** 2026-09-01 11:40
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 12:57
 - **Problem:** GATE-MCP was created to keep AGENT writing quality high and enforce 100% compliance with GAIN-CODING core policies (International English, no hardwrap). In practice the agent still occasionally produces Indonesian in public docs or hard-wraps text, and GATE-MCP does not prevent it because the validator only checks tracker format/numbering/gate rules, not language, line width, or policy rules.
 - **Possible Fix:** Add policy enforcement to GATE-MCP: a tool (e.g. validate_doc or a pre-commit check) that checks draft documents, tracker content, and PR/issue bodies against core policies (International English only, no hardwrap, no BOM, LF), so violations are caught by the tool rather than by the agent remembering the rules.
 - **Actual Fix:** Verified by source: the package has no language/hardwrap/policy check anywhere (grep for language/english/hardwrap/policy/validate_doc over src/gate_mcp/*.py returns nothing); the validator only enforces tracker format, numbering and gate rules. Add a policy-enforcement tool or pre-commit check that validates documents/tracker/PR/issue bodies against core policies (International English, no hardwrap, no BOM, LF).
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added a writing-quality policy spec (specs/policies/writing-quality.yaml) and a validate_doc MCP tool that checks a committed document for UTF-8 BOM, CRLF line endings and trailing whitespace (errors) plus non-Latin script, hard-wrapped sentences and Indonesian function-word text (warnings), via a new policy_validator module with 7 pytest tests.
+- **Changes:** Server now exposes a sixth MCP tool validate_doc(path) that validates a document against the writing-quality policy. Deterministic format violations (BOM, CRLF, trailing whitespace, non-Latin script) block with ok=false; heuristic concerns (hardwrap, Indonesian text) surface as warnings without blocking, so the tool never fails on a false positive.
 
 ### ENH-015 — Emit clickable action links so the user can advance workflows with a mouse instead of typing
 - **Status:** `rejected`
