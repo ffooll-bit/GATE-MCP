@@ -6,8 +6,13 @@ GATE = Guided Agent Through Enforcement. The full expansion is
 
 from __future__ import annotations
 
+import json
+import os
 import re
+import subprocess
+import tempfile
 from datetime import datetime, timezone
+from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
@@ -70,6 +75,17 @@ def _replace_item_field(text: str, item_id: str, field: str, value: str) -> str:
             lines[i] = _field_line(field, value)
             return "\n".join(lines) + ("\n" if text.endswith("\n") else "")
     raise ValueError(f"field {field!r} not found in item {item_id}")
+
+
+def _gh(app: str, args: list[str]) -> subprocess.CompletedProcess:
+    """Run a gh subcommand capturing output; errors surface as returncode."""
+    return subprocess.run(
+        ["gh", app, *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
 
 
 @mcp.tool()
@@ -171,6 +187,86 @@ def sync_issue(item_id: str, issue: str) -> dict:
     except OSError as exc:
         return {"ok": False, "error": f"tracker write failed: {exc}"}
     return {"ok": True, "message": f"{item_id} Issue set to {issue}"}
+
+
+@mcp.tool()
+def create_issue(item_id: str) -> dict:
+    """Create a GitHub Issue for a verified item.
+
+    Builds the issue body from the tracker item, validates it against the
+    writing-quality policy, then creates the issue with gh. No issue is created
+    when the body fails validation.
+    """
+    try:
+        spec = _spec()
+    except SpecError as exc:
+        return {"ok": False, "error": str(exc)}
+    try:
+        items = parse_tracker(read_tracker())
+    except OSError as exc:
+        return {"ok": False, "error": f"tracker read failed: {exc}"}
+    item = next((it for it in items if it["id"] == item_id), None)
+    if item is None:
+        return {"ok": False, "error": f"item not found: {item_id}"}
+    fields = item["fields"]
+    status = fields.get("Status", "").strip("`")
+    if status != "verified":
+        return {
+            "ok": False,
+            "error": f"create_issue requires a verified item, {item_id} is {status!r}",
+        }
+    label_codes = (spec.get("fields") or {}).get("id", {}).get("label_codes", {})
+    code = item_id[: item_id.rfind("-")]
+    label = label_codes.get(code)
+    if not label:
+        return {"ok": False, "error": f"no GitHub label for code {code!r}"}
+    body = (
+        f"## Summary\n\n{fields.get('Problem', '')}\n\n"
+        f"## Suggested fix\n\n{fields.get('Possible Fix', '')}\n"
+    )
+    fd, raw_path = tempfile.mkstemp(suffix=".md", prefix="gate-mcp-issue-")
+    os.close(fd)
+    tmp = Path(raw_path)
+    try:
+        tmp.write_text(body, encoding="utf-8", newline="\n")
+        result = validate_doc_file(str(tmp))
+        errors = [f for f in result["findings"] if f["severity"] == "error"]
+        if errors:
+            return {
+                "ok": False,
+                "error": "issue body failed writing-quality validation",
+                "findings": errors,
+            }
+        proc = _gh(
+            "issue",
+            [
+                "create",
+                "--title",
+                item["title"],
+                "--label",
+                label,
+                "--body-file",
+                str(tmp),
+            ],
+        )
+        if proc.returncode != 0:
+            return {"ok": False, "error": f"gh failed: {proc.stderr.strip()}"}
+        created = json.loads(proc.stdout) if proc.stdout.strip() else {}
+        return {
+            "ok": True,
+            "issue": created.get("url"),
+            "number": created.get("number"),
+            "message": f"created issue {created.get('number')} for {item_id}",
+        }
+    except json.JSONDecodeError:
+        return {"ok": False, "error": "gh returned non-JSON output"}
+    except OSError as exc:
+        return {"ok": False, "error": f"issue write failed: {exc}"}
+    finally:
+        try:
+            tmp.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 @mcp.tool()

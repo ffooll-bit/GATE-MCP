@@ -191,16 +191,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Server now exposes an eighth MCP tool sync_issue(item_id, issue). Agents route issue-reference mutations through GATE-MCP instead of direct file edits, closing the manual-edit gap for the Create Issues interaction of the findings-and-planning workflow.
 
 ### ENH-013 — Agent writes GitHub issue bodies directly instead of through a GATE-MCP tool
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #29
 - **Recorded:** 2026-09-01 11:40
-- **Implemented:** `—`
+- **Implemented:** 2026-09-02 07:44
 - **Problem:** Issue bodies for #25, #26, #27 were written manually in temp/ files and created with gh issue create --body-file. GATE-MCP provides no tool to build or validate an issue body, so the writing quality (language, hardwrap) is not controlled by GATE-MCP even though that is its purpose.
 - **Possible Fix:** Add an MCP tool (e.g. create_issue(item_id)) that builds the issue body from tracker data and validates it against core policies (International English, no hardwrap, no BOM) before creating the GitHub issue, so writing quality is enforced by GATE-MCP rather than left to the agent.
 - **Actual Fix:** Verified by observation: issue bodies #25/#26/#27 were hand-written to temp/ and created with gh issue create --body-file; server.py exposes only five tools (record/verify/sync/archive/deliver) and none builds or validates an issue body. Add an MCP tool (e.g. create_issue(item_id)) that generates and policy-validates the body so writing quality is enforced by GATE-MCP.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added a create_issue(item_id) MCP tool to server.py that builds a GitHub issue body from the tracker item (Summary from Problem, Suggested fix from Possible Fix), writes it to a temp file, validates it against the writing-quality policy before creating the issue with gh, and derives the label from the item id's label code. Three protocol-level pytest cases cover success (mocked gh), non-verified items, and body failing validation.
+- **Changes:** Server now exposes a ninth MCP tool create_issue(item_id). Only verified items qualify; the generated body is policy-validated (BOM, CRLF, trailing whitespace, non-Latin script block; hardwrap and language surface as warnings) so no policy-violating issue is ever created. gh is invoked via a mockable helper.
 
 ### ENH-014 — GATE-MCP does not enforce writing-quality policies (language, hardwrap)
 - **Status:** `implemented`

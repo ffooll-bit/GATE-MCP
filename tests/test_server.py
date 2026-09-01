@@ -224,6 +224,94 @@ async def test_sync_issue_bad_format(tracker):
     assert "invalid issue reference" in payload["error"]
 
 
+async def _record_and_verify(session):
+    await session.call_tool(
+        "record_finding", {"title": "T", "problem": "P", "possible_fix": "F"}
+    )
+    await session.call_tool(
+        "verify_finding", {"item_id": "ENH-001", "actual_fix": "fixed"}
+    )
+
+
+async def test_create_issue(tracker, monkeypatch):
+    calls = []
+    import json as _json
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type(
+            "P",
+            (),
+            {
+                "returncode": 0,
+                "stdout": _json.dumps({"number": 1, "url": "https://x/issues/1"}),
+                "stderr": "",
+            },
+        )()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        await _record_and_verify(session)
+        res = await session.call_tool("create_issue", {"item_id": "ENH-001"})
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is True
+    assert payload["number"] == 1
+    assert calls and calls[0][0] == "issue"
+    assert "--label" in calls[0][1]
+    assert "--body-file" in calls[0][1]
+
+
+async def test_create_issue_requires_verified(tracker, monkeypatch):
+    calls = []
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type("P", (), {"returncode": 0, "stdout": "{}", "stderr": ""})()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        await session.call_tool(
+            "record_finding", {"title": "T", "problem": "P", "possible_fix": "F"}
+        )
+        res = await session.call_tool("create_issue", {"item_id": "ENH-001"})
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "requires a verified item" in payload["error"]
+    assert not calls
+
+
+async def test_create_issue_blocks_policy_violation(tracker, monkeypatch):
+    calls = []
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type("P", (), {"returncode": 0, "stdout": "{}", "stderr": ""})()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        await session.call_tool(
+            "record_finding",
+            {"title": "T", "problem": "P\u041f", "possible_fix": "F"},
+        )
+        await session.call_tool(
+            "verify_finding", {"item_id": "ENH-001", "actual_fix": "fixed"}
+        )
+        res = await session.call_tool("create_issue", {"item_id": "ENH-001"})
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "writing-quality validation" in payload["error"]
+    assert not calls
+
+
 async def test_deliver_finding(tracker):
     async with await _session() as session:
         await session.initialize()
