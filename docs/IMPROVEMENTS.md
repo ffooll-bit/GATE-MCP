@@ -153,3 +153,27 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
+
+### ENH-010 — First MCP stdio tool call can intermittently return an empty content node on Windows
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:30
+- **Implemented:** `—`
+- **Problem:** On Windows (Python 3.13 + anyio), the first MCP tool call immediately after initialize() over stdio can intermittently return an empty content node, so json.loads on content[0].text fails. The harness needed a 3x retry with a short sleep to obtain valid JSON responses. Not a server logic defect, but flaky transport framing that real MCP clients without retry could observe as an occasional empty first response.
+- **Possible Fix:** Add a small retry on the first tool call in non-editable client harnesses, or harden the server so the first stdio tool call never returns an empty content node when the underlying write races; document the workaround for third-party MCP clients.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-011 — TRACKER path is hardcoded from __file__ with no environment override
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:30
+- **Implemented:** `—`
+- **Problem:** The MCP stdio server derives TRACKER from __file__ (REPO_ROOT = Path(__file__).resolve().parent.parent.parent), hardcoding it to the package install location with no environment-variable override. This makes safe E2E testing require isolated repo copies and breaks standalone wheel installs, where TRACKER resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
+- **Possible Fix:** Add an environment-variable override for the tracker path (and repo root) so a standalone install or an isolated test can point TRACKER at a file; fall back to the current __file__-derived path when the override is unset. This also fixes the packaging gap where a wheel-installed server cannot resolve its tracker.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
