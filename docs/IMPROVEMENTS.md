@@ -141,3 +141,15 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Rejection Reason:** `—`
 - **Actual Implemented:** Added build/ and dist/ to the Python section of .gitignore so packaging build artifacts no longer appear as untracked entries in git status.
 - **Changes:** Running pip wheel . (or any source/wheel build) no longer surfaces an untracked build/ directory in git status; dist/ is also ignored for future packaging output.
+
+### ENH-009 — Wheel does not bundle specs/ so a standalone install cannot operate
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:28
+- **Implemented:** `—`
+- **Problem:** pip wheel produces gate_mcp-0.1.0-py3-none-any.whl that ships only the Python modules; specs/ and docs/ are absent. A standalone pip install gate_mcp boots and registers all 5 tools but every workflow tool fails with "workflows spec not found: specs/workflows/findings-and-planning.yaml"; TRACKER also resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
+- **Possible Fix:** Bundle specs/ (and optionally a default docs/) in the wheel via pyproject package-data/data_files so a standalone install locates its spec and tracker; otherwise document "run from a repo checkout" as an explicit limitation.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
