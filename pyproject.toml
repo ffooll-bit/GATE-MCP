@@ -10,8 +10,14 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["mcp>=1.0,<2", "pyyaml"]
 
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff"]
+
 [project.scripts]
 gate-mcp = "gate_mcp.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

@@ -119,16 +119,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Running python -m gate_mcp now starts the server over stdio (previously it failed with No module named gate_mcp.__main__). The gate-mcp console script still works unchanged. Verified end-to-end: both entry points initialize and expose the 5 tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding).
 
 ### ENH-007 — No automated test coverage for the five MCP tools
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #19
 - **Recorded:** 2026-09-01 10:35
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 11:03
 - **Problem:** The 14 unit tests only cover spec_loader and tracker_validator; the five MCP tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding) in server.py have no automated coverage. The end-to-end harness written during stability testing proves they work, but it lives in temp/ (gitignored) and does not run in CI, so a regression in server.py would not turn CI red.
 - **Possible Fix:** Add tests/test_server.py that calls the tool functions against a temporary tracker (monkeypatching read_tracker/write_tracker), covering record, verify, sync, archive, deliver and error cases (unknown label, missing item, archive refusal); or fold the end-to-end harness into the suite CI runs.
 - **Actual Fix:** Confirmed: `tests/` has only `test_spec_loader.py` and `test_tracker_validator.py`; no test covers the five MCP tools in `server.py` (0 server-tool references). MCP SDK docs endorse testing tools via an in-memory client calling `call_tool`. Fix: add `tests/test_server.py` using the MCP in-memory test client (`create_connected_server_and_client_session`) against a temporary tracker (monkeypatched `read_tracker`/`write_tracker`), covering record, verify, sync, archive, deliver and the error cases; add the required async test dependency to dev extras.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added tests/test_server.py: 9 protocol-level tests covering all five MCP tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding) plus record-next-number, unknown-label, missing-item, and archive-refusal/refusal-met cases, driving the real MCP protocol via create_connected_server_and_client_session against a monkeypatched temp tracker so docs/IMPROVEMENTS.md is never touched. Added [project.optional-dependencies] dev (pytest-asyncio) and changed CI test install to pip install -e .[dev]; configured asyncio_mode=auto in pyproject. Local: 23 pytest pass, ruff clean.
+- **Changes:** Added tests/test_server.py; pyproject.toml [dev] extra + pytest asyncio_mode=auto; ci.yml test job install -e .[dev]
 
 ### ENH-008 — `build/` directory from pip wheel is not gitignored
 - **Status:** `implemented`
