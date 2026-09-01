@@ -107,16 +107,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `git status` no longer reports `.cortexkit/`, `.playwright-mcp/`, `ARCHITECTURE.md`, or `STRUCTURE.md` as untracked. The repository now carries its architecture and structure design documents in version control while machine-local tooling stays out of the public repo.
 
 ### ENH-006 — Documented `python -m gate_mcp` run command fails (no __main__.py)
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #18
 - **Recorded:** 2026-09-01 10:35
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 10:56
 - **Problem:** README.md, ARCHITECTURE.md, and STRUCTURE.md all instruct running the server with `python -m gate_mcp`, but the command fails with `No module named gate_mcp.__main__` because the package has no `src/gate_mcp/__main__.py`. The working entry points are the `gate-mcp` console script or `python -c "from gate_mcp.server import main; main()"`. A user following the published README therefore cannot start the server.
 - **Possible Fix:** Add `src/gate_mcp/__main__.py` that calls `main()` from server.py so `python -m gate_mcp` works, and align README/ARCHITECTURE/STRUCTURE with the correct entry point. Verify end-to-end.
 - **Actual Fix:** Confirmed: `python -m gate_mcp` indeed fails (No module named gate_mcp.__main__) because the package has no `src/gate_mcp/__main__.py`, and Python packaging docs confirm `python -m <pkg>` requires a `__main__.py`. Fix: add `src/gate_mcp/__main__.py` that calls `main()` from server.py so `python -m gate_mcp` works, and align README/ARCHITECTURE/STRUCTURE to document both the `gate-mcp` console script and `python -m gate_mcp` correctly. Verify end-to-end over stdio.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added src/gate_mcp/__main__.py that calls main() from server.py so python -m gate_mcp resolves and starts the server; updated README Usage to document both the gate-mcp console script (primary) and python -m gate_mcp. ARCHITECTURE already listed both entry points and was left unchanged (minimal diff).
+- **Changes:** Running python -m gate_mcp now starts the server over stdio (previously it failed with No module named gate_mcp.__main__). The gate-mcp console script still works unchanged. Verified end-to-end: both entry points initialize and expose the 5 tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding).
 
 ### ENH-007 — No automated test coverage for the five MCP tools
 - **Status:** `verified`
