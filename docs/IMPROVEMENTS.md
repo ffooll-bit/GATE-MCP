@@ -225,3 +225,27 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Rejection Reason:** Tested in the actual OpenChamber VS Code host: a markdown link is rendered clickable but opens the external URL in a browser; it does not inject a command into the chat session, so a click cannot advance the workflow. A markdown link is navigation-only and cannot drive a one-click approve/advance; only OpenChamber's built-in UI (permission/auto-accept buttons) provides clickable actions, which GATE-MCP cannot inject from chat. Because clickable chat actions cannot be delivered by the agent in this host, the finding is rejected as not implementable with current tooling.
 - **Actual Implemented:** `—`
 - **Changes:** `—`
+
+### ENH-016 — Toolset lacks reject_finding so the workflow's rejected outcome forces manual edits
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:50
+- **Implemented:** `—`
+- **Problem:** The findings-and-planning workflow (and its YAML spec) defines a rejected outcome for the Verify interaction, but the GATE-MCP toolset exposes only five tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding). There is no reject_finding tool, so changing an item to Status=rejected (e.g. ENH-015, rejected after testing clickable links in OpenChamber) forces the agent to hand-edit docs/IMPROVEMENTS.md, violating the goal of routing all tracker mutations through GATE-MCP.
+- **Possible Fix:** Add a reject_finding(item_id, rejection_reason) MCP tool that sets Status=rejected and fills Rejection Reason (mirroring verify_finding for the rejected outcome defined in the findings-and-planning workflow), so agents never have to hand-edit the tracker for a rejection. Consider a broader sync/update tool for other field corrections.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-017 — Deliver interaction (PR create/merge) is not covered by GATE-MCP tools
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:52
+- **Implemented:** `—`
+- **Problem:** The findings-and-planning Deliver interaction (push branch, open PR to main, wait green CI, merge, cleanup) is performed entirely by hand with the gh CLI. GATE-MCP provides no tool to create or merge the PR, so the closing step of the workflow is not enforced (or validated) by GATE-MCP even though the workflow is otherwise driven by its machine-readable spec.
+- **Possible Fix:** Add optional convenience tools create_pr and merge_pr that wrap gh pr create/merge (checking the PR template, spelling, no hardwrap body) so the Deliver interaction is handled inside GATE-MCP; or explicitly document that PR/merge stays a git-workflow responsibility outside the tracker-enforcement scope of GATE-MCP.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
