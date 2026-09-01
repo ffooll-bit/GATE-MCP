@@ -16,6 +16,6 @@
 
 ### Fixed
 
-- _Bug fixes, one line each, referencing the issue if applicable._
+- `python -m gate_mcp` now starts the server correctly via a new `src/gate_mcp/__main__.py`; README documents both the `gate-mcp` console script and `python -m gate_mcp` (#18)
 
 [Unreleased]: https://github.com/ffooll-bit/GATE-MCP/compare/v0.1.0...HEAD

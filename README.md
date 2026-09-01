@@ -32,8 +32,10 @@ pip install .
 Register GATE-MCP with your MCP client, or run it directly over stdio:
 
 ```bash
-python -m gate_mcp
+gate-mcp
 ```
+
+Both the `gate-mcp` console script and `python -m gate_mcp` start the server over stdio.
 
 ## Documentation
 
