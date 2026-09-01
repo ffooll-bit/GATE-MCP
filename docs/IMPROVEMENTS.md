@@ -180,7 +180,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-012 — Agent edits the tracker file directly for Issue sync instead of using an MCP tool
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #28
 - **Recorded:** 2026-09-01 11:40
 - **Implemented:** `—`
 - **Problem:** During Interaction 3 (Create GitHub Issues and sync), the tracker Issue fields were updated by directly editing docs/IMPROVEMENTS.md instead of through an MCP tool. GATE-MCP provides record_finding/verify_finding/deliver_finding tools, so mutating the tracker by hand is inconsistent and bypasses the project's own enforcement.
@@ -192,7 +192,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-013 — Agent writes GitHub issue bodies directly instead of through a GATE-MCP tool
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #29
 - **Recorded:** 2026-09-01 11:40
 - **Implemented:** `—`
 - **Problem:** Issue bodies for #25, #26, #27 were written manually in temp/ files and created with gh issue create --body-file. GATE-MCP provides no tool to build or validate an issue body, so the writing quality (language, hardwrap) is not controlled by GATE-MCP even though that is its purpose.
@@ -204,7 +204,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-014 — GATE-MCP does not enforce writing-quality policies (language, hardwrap)
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #30
 - **Recorded:** 2026-09-01 11:40
 - **Implemented:** `—`
 - **Problem:** GATE-MCP was created to keep AGENT writing quality high and enforce 100% compliance with GAIN-CODING core policies (International English, no hardwrap). In practice the agent still occasionally produces Indonesian in public docs or hard-wraps text, and GATE-MCP does not prevent it because the validator only checks tracker format/numbering/gate rules, not language, line width, or policy rules.
@@ -228,7 +228,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-016 — Toolset lacks reject_finding so the workflow's rejected outcome forces manual edits
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #31
 - **Recorded:** 2026-09-01 11:50
 - **Implemented:** `—`
 - **Problem:** The findings-and-planning workflow (and its YAML spec) defines a rejected outcome for the Verify interaction, but the GATE-MCP toolset exposes only five tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding). There is no reject_finding tool, so changing an item to Status=rejected (e.g. ENH-015, rejected after testing clickable links in OpenChamber) forces the agent to hand-edit docs/IMPROVEMENTS.md, violating the goal of routing all tracker mutations through GATE-MCP.
@@ -240,7 +240,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-017 — Deliver interaction (PR create/merge) is not covered by GATE-MCP tools
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #32
 - **Recorded:** 2026-09-01 11:52
 - **Implemented:** `—`
 - **Problem:** The findings-and-planning Deliver interaction (push branch, open PR to main, wait green CI, merge, cleanup) is performed entirely by hand with the gh CLI. GATE-MCP provides no tool to create or merge the PR, so the closing step of the workflow is not enforced (or validated) by GATE-MCP even though the workflow is otherwise driven by its machine-readable spec.
