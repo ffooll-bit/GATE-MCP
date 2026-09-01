@@ -215,13 +215,13 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-015 — Emit clickable action links so the user can advance workflows with a mouse instead of typing
-- **Status:** `verified`
+- **Status:** `rejected`
 - **Issue:** `—`
 - **Recorded:** 2026-09-01 11:40
 - **Implemented:** `—`
 - **Problem:** The user must type yes/approve/switching commands to move between workflows, interactions, plans, and commits. To minimize keyboard use, they want to just click a link the agent provides - a link for the next interaction, approving a plan, approving a commit, switching workflows, and so on.
 - **Possible Fix:** Make the agent (alongside GATE-MCP) emit clickable action links at the end of each message - such as approve plan, approve commit, advance interaction, or switch workflow - so the user can click instead of typing. Requires confirming what deep-link/action-link affordances the host CLI (OpenCode) supports, then exposing them as labeled links.
-- **Actual Fix:** Verified as a real need: the user must type to advance workflows/approve/switch. Online research (opencode issues #1168, #5799, #4381) confirms the opencode TUI does not yet support clickable action links; /share produces a viewable session URL, and custom commands (e.g. /approve-plan, /start-act style) are triggered by typing, not by clicking a link. So a click-to-advance UX depends on a host capability not yet available. Honest note: implementable today only via mouse/keybind-driven commands or when opencode ships clickable links; not a fix GATE-MCP (an MCP server) can deliver alone.
-- **Rejection Reason:** `—`
+- **Actual Fix:** `—`
+- **Rejection Reason:** Tested in the actual OpenChamber VS Code host: a markdown link is rendered clickable but opens the external URL in a browser; it does not inject a command into the chat session, so a click cannot advance the workflow. A markdown link is navigation-only and cannot drive a one-click approve/advance; only OpenChamber's built-in UI (permission/auto-accept buttons) provides clickable actions, which GATE-MCP cannot inject from chat. Because clickable chat actions cannot be delivered by the agent in this host, the finding is rejected as not implementable with current tooling.
 - **Actual Implemented:** `—`
 - **Changes:** `—`
