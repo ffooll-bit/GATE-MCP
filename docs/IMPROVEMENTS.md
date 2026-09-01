@@ -144,7 +144,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-009 — Wheel does not bundle specs/ so a standalone install cannot operate
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #25
 - **Recorded:** 2026-09-01 11:28
 - **Implemented:** `—`
 - **Problem:** pip wheel produces gate_mcp-0.1.0-py3-none-any.whl that ships only the Python modules; specs/ and docs/ are absent. A standalone pip install gate_mcp boots and registers all 5 tools but every workflow tool fails with "workflows spec not found: specs/workflows/findings-and-planning.yaml"; TRACKER also resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
@@ -156,7 +156,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-010 — First MCP stdio tool call can intermittently return an empty content node on Windows
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #26
 - **Recorded:** 2026-09-01 11:30
 - **Implemented:** `—`
 - **Problem:** On Windows (Python 3.13 + anyio), the first MCP tool call immediately after initialize() over stdio can intermittently return an empty content node, so json.loads on content[0].text fails. The harness needed a 3x retry with a short sleep to obtain valid JSON responses. Not a server logic defect, but flaky transport framing that real MCP clients without retry could observe as an occasional empty first response.
@@ -168,7 +168,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-011 — TRACKER path is hardcoded from __file__ with no environment override
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #27
 - **Recorded:** 2026-09-01 11:30
 - **Implemented:** `—`
 - **Problem:** The MCP stdio server derives TRACKER from __file__ (REPO_ROOT = Path(__file__).resolve().parent.parent.parent), hardcoding it to the package install location with no environment-variable override. This makes safe E2E testing require isolated repo copies and breaks standalone wheel installs, where TRACKER resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
