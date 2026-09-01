@@ -83,16 +83,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** The tracker validator and spec loader now have automated regression coverage that runs with `pytest`; `tests/` is no longer empty.
 
 ### ENH-004 — CI does not run the Python checks (ruff and pytest)
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #13
 - **Recorded:** 2026-09-01 10:00
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 10:16
 - **Problem:** The CI workflow (`.github/workflows/ci.yml`) only checks CRLF/BOM on `*.md` files; it does not run `ruff` or `pytest`. The findings-and-planning enforcement tools and their test suite are therefore only verified locally, so a Python regression would not turn CI red and the claim that the workflow "can be used without problems" has no automated safety net.
 - **Possible Fix:** Add a Python job to `.github/workflows/ci.yml` that installs the project (`pip install -e .[dev]` or equivalent) and runs `ruff check`, `ruff format --check`, and `pytest` on a Python 3.10+ runner, so the findings-and-planning enforcement stays green in CI.
 - **Actual Fix:** Verified — `ci.yml` reviewed; its single `build` job checks only CRLF/BOM on `*.md` with no Python setup, `ruff`, or `pytest` steps. GitHub Actions and Ruff official docs confirm the standard pattern (`actions/setup-python` + `pip install`, then `ruff check --output-format=github`, `ruff format --check`, `pytest`). Fix: add a Python step to `ci.yml` using `setup-python` (3.10+) that installs the project and runs `ruff check`, `ruff format --check`, and `pytest`.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added a `test` job to `.github/workflows/ci.yml` that runs on `ubuntu-latest` with `actions/setup-python@v5` (Python 3.12), installs the project and tooling (`pip install -e . ruff pytest`), then runs `ruff check . --output-format=github`, `ruff format --check .`, and `pytest`. The existing `build` job (CRLF/BOM check) is unchanged. The existing code already passes all three checks locally, so the new job goes green without code changes.
+- **Changes:** CI now runs `ruff check`, `ruff format --check`, and `pytest` on every push to `main` and pull request against `main`, in addition to the existing CRLF/BOM check, so Python regressions now turn CI red.
 
 ### ENH-005 — Decide whether untracked files are tracked or ignored
 - **Status:** `implemented`

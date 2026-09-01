@@ -23,3 +23,21 @@ jobs:
             echo "::error::UTF-8 BOM found in markdown files"
             exit 1
           fi
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and tooling
+        run: |
+          pip install -e . ruff pytest
+      - name: Lint with ruff
+        run: ruff check . --output-format=github
+      - name: Check formatting with ruff
+        run: ruff format --check .
+      - name: Test with pytest
+        run: pytest
