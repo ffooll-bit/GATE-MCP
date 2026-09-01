@@ -23,3 +23,7 @@ temp/
 # Local scratch
 *.log
 *.tmp
+
+# Local tooling artifacts
+.cortexkit/
+.playwright-mcp/

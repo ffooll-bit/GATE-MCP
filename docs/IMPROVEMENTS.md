@@ -95,13 +95,13 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-005 — Decide whether untracked files are tracked or ignored
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #14
 - **Recorded:** 2026-09-01 10:00
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 10:13
 - **Problem:** Four untracked items pollute `git status`: `.cortexkit/` and `.playwright-mcp/` are machine-local tooling artifacts that should not be committed to the public repo, while `ARCHITECTURE.md` and `STRUCTURE.md` are project design documents that are currently untracked and, if in the repo, must reflect the implemented code rather than the "planned" state.
 - **Possible Fix:** Add `.cortexkit/` and `.playwright-mcp/` to `.gitignore`; track `ARCHITECTURE.md` and `STRUCTURE.md` and update their "planned / to be created" references (spec_loader, tracker_validator, five MCP tools, tests) to the implemented state.
 - **Actual Fix:** Verified — `.gitignore` reviewed; it lacks `.cortexkit/`, `.playwright-mcp/`, `ARCHITECTURE.md`, and `STRUCTURE.md`, and `git status` shows all four as untracked. Tooling artifacts should be ignored; `ARCHITECTURE.md` and `STRUCTURE.md` are project design docs worth tracking once updated to reflect the implemented code. Fix: add the two tooling dirs to `.gitignore` and commit updated `ARCHITECTURE.md`/`STRUCTURE.md`.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added `.cortexkit/` and `.playwright-mcp/` to `.gitignore` so the machine-local tooling artifacts are no longer reported as untracked. Tracked `ARCHITECTURE.md` and `STRUCTURE.md` as project design documents. Both documents already described the implemented state (the spec loader, tracker validator, five MCP tools, and test suite were listed as existing), so no "planned / to be created" references needed to be rewritten; the only refinement was removing `.cortexkit/` and `.playwright-mcp/` from the `STRUCTURE.md` directory tree so it matches their now-ignored tooling status.
+- **Changes:** `git status` no longer reports `.cortexkit/`, `.playwright-mcp/`, `ARCHITECTURE.md`, or `STRUCTURE.md` as untracked. The repository now carries its architecture and structure design documents in version control while machine-local tooling stays out of the public repo.

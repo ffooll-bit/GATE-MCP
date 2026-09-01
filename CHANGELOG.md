@@ -10,7 +10,7 @@
 
 ### Changed
 
-- _Behaviour changes, including any migration notes._
+- Track `ARCHITECTURE.md` and `STRUCTURE.md` as project design documents and gitignore the machine-local `.cortexkit/` and `.playwright-mcp/` tooling artifacts (#14)
 
 ### Fixed
 
