@@ -137,6 +137,21 @@ def verify_finding(item_id: str, actual_fix: str) -> dict:
 
 
 @mcp.tool()
+def reject_finding(item_id: str, rejection_reason: str) -> dict:
+    """Reject a verified item: set Status=rejected and fill Rejection Reason."""
+    try:
+        text = read_tracker()
+        text = _replace_item_field(text, item_id, "Status", "`rejected`")
+        text = _replace_item_field(text, item_id, "Rejection Reason", rejection_reason)
+        write_tracker(text)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    except OSError as exc:
+        return {"ok": False, "error": f"tracker write failed: {exc}"}
+    return {"ok": True, "message": f"{item_id} rejected"}
+
+
+@mcp.tool()
 def sync_tracker() -> dict:
     """Validate docs/IMPROVEMENTS.md and reorder items to canonical form."""
     try:
