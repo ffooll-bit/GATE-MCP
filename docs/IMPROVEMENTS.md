@@ -143,37 +143,37 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Running pip wheel . (or any source/wheel build) no longer surfaces an untracked build/ directory in git status; dist/ is also ignored for future packaging output.
 
 ### ENH-009 — Wheel does not bundle specs/ so a standalone install cannot operate
-- **Status:** `recorded`
+- **Status:** `verified`
 - **Issue:** `—`
 - **Recorded:** 2026-09-01 11:28
 - **Implemented:** `—`
 - **Problem:** pip wheel produces gate_mcp-0.1.0-py3-none-any.whl that ships only the Python modules; specs/ and docs/ are absent. A standalone pip install gate_mcp boots and registers all 5 tools but every workflow tool fails with "workflows spec not found: specs/workflows/findings-and-planning.yaml"; TRACKER also resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
 - **Possible Fix:** Bundle specs/ (and optionally a default docs/) in the wheel via pyproject package-data/data_files so a standalone install locates its spec and tracker; otherwise document "run from a repo checkout" as an explicit limitation.
-- **Actual Fix:** `—`
+- **Actual Fix:** Verified by building the wheel and installing it in a clean venv: the wheel contains only the four Python modules, with no specs/ or docs/. A standalone install registers all 5 tools but record_finding returns 'workflows spec not found: specs/workflows/findings-and-planning.yaml' and TRACKER resolves to a nonexistent site-packages path. Fix: ship specs/ (and optionally docs/) via pyproject package-data/data_files, or document a run-from-repo limitation.
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
 
 ### ENH-010 — First MCP stdio tool call can intermittently return an empty content node on Windows
-- **Status:** `recorded`
+- **Status:** `verified`
 - **Issue:** `—`
 - **Recorded:** 2026-09-01 11:30
 - **Implemented:** `—`
 - **Problem:** On Windows (Python 3.13 + anyio), the first MCP tool call immediately after initialize() over stdio can intermittently return an empty content node, so json.loads on content[0].text fails. The harness needed a 3x retry with a short sleep to obtain valid JSON responses. Not a server logic defect, but flaky transport framing that real MCP clients without retry could observe as an occasional empty first response.
 - **Possible Fix:** Add a small retry on the first tool call in non-editable client harnesses, or harden the server so the first stdio tool call never returns an empty content node when the underlying write races; document the workaround for third-party MCP clients.
-- **Actual Fix:** `—`
+- **Actual Fix:** Verified by repeated stdio runs on Windows Python 3.13: the first tool call after initialize() intermittently returned an empty content node so json.loads failed, and was recovered by a 3x retry with a short sleep. This is transport framing flakiness, not a server logic defect. Fix: harden the server so the first stdio tool call never returns an empty content node, or document the retry workaround for third-party MCP clients.
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
 
 ### ENH-011 — TRACKER path is hardcoded from __file__ with no environment override
-- **Status:** `recorded`
+- **Status:** `verified`
 - **Issue:** `—`
 - **Recorded:** 2026-09-01 11:30
 - **Implemented:** `—`
 - **Problem:** The MCP stdio server derives TRACKER from __file__ (REPO_ROOT = Path(__file__).resolve().parent.parent.parent), hardcoding it to the package install location with no environment-variable override. This makes safe E2E testing require isolated repo copies and breaks standalone wheel installs, where TRACKER resolves to a nonexistent site-packages/Lib/docs/IMPROVEMENTS.md.
 - **Possible Fix:** Add an environment-variable override for the tracker path (and repo root) so a standalone install or an isolated test can point TRACKER at a file; fall back to the current __file__-derived path when the override is unset. This also fixes the packaging gap where a wheel-installed server cannot resolve its tracker.
-- **Actual Fix:** `—`
+- **Actual Fix:** Verified by source: tracker_validator.py:8-9 hardcodes REPO_ROOT from __file__ and TRACKER as REPO_ROOT/docs/IMPROVEMENTS.md with no environment override anywhere in the package; a wheel-installed server resolves TRACKER to site-packages/Lib/docs/IMPROVEMENTS.md. Fix: add an environment-variable override for the tracker (and repo root), falling back to the __file__-derived path when unset.
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
