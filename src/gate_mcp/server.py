@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 
 from mcp.server.fastmcp import FastMCP
 
+from gate_mcp.policy_validator import validate_doc as validate_doc_file
 from gate_mcp.spec_loader import SpecError, load_workflow_spec
 from gate_mcp.tracker_validator import (
     EMPTY,
@@ -241,6 +242,29 @@ def deliver_finding(item_id: str, actual_implemented: str, changes: str) -> dict
     except OSError as exc:
         return {"ok": False, "error": f"tracker write failed: {exc}"}
     return {"ok": True, "message": f"{item_id} implemented"}
+
+
+@mcp.tool()
+def validate_doc(path: str) -> dict:
+    """Validate a document against the writing-quality policy.
+
+    Checks a committed doc for BOM, CRLF and trailing whitespace (errors) plus
+    non-Latin script, hardwrapped sentences and Indonesian text (warnings).
+    """
+    try:
+        return validate_doc_file(path)
+    except OSError as exc:
+        return {
+            "ok": False,
+            "path": path,
+            "findings": [
+                {
+                    "severity": "error",
+                    "code": "io",
+                    "message": f"read failed: {exc}",
+                }
+            ],
+        }
 
 
 def main() -> None:
