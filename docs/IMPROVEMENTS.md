@@ -35,16 +35,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 ## Items
 
 ### ENH-001 — Repository structure not verified against the standard
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #4
 - **Recorded:** YYYY-MM-DD HH:MM
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 10:15
 - **Problem:** The repository is newly created and its folders, guardrail files, and settings have not yet been confirmed against the workflow standard.
 - **Possible Fix:** Run the verification checks from the workflow before the first commit.
-- **Actual Fix:** `Verified — repository structure was built per the GAIN-Coding workflow standard during bootstrap; the original concern (unverified structure) is resolved. Not marked implemented (status→implemented happens via the Code Implementation workflow).`
+- **Actual Fix:** `Verified — repository structure was built per the GAIN-Coding workflow standard during bootstrap; the original concern (unverified structure) is resolved. Not marked implemented (status 'implemented' happens via the Code Implementation workflow).`
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Confirmed the repository structure matches the GAIN-Coding standard: all six root docs (README, CHANGELOG, LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY), guardrail files (.gitignore, .editorconfig, .gitattributes), the full .github/ layout (ci.yml, 3 issue templates, PR and release templates, dependabot), specs/, src/gate_mcp/ package, and tests/. Branch protection on main is active in the public repository.
+- **Changes:** No code or behaviour change; ENH-001 is resolved as a structure-verification finding with its status recorded as implemented for traceability.
 
 ### ENH-002 — Implement findings-and-planning vertical slice (core enforcement)
 - **Status:** `implemented`
