@@ -312,6 +312,105 @@ async def test_create_issue_blocks_policy_violation(tracker, monkeypatch):
     assert not calls
 
 
+async def test_create_pr(tracker, monkeypatch):
+    calls = []
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type(
+            "P",
+            (),
+            {"returncode": 0, "stdout": "https://github.com/x/pull/40", "stderr": ""},
+        )()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        res = await session.call_tool(
+            "create_pr",
+            {"branch": "feat/test", "title": "T", "body": "## Summary\n\nBody text.\n"},
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is True
+    assert payload["url"] == "https://github.com/x/pull/40"
+    assert calls[0][0] == "pr"
+    args = calls[0][1]
+    assert "--body-file" in args
+    assert "--head" in args and "feat/test" in args
+
+
+async def test_create_pr_blocks_policy_violation(tracker, monkeypatch):
+    calls = []
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type("P", (), {"returncode": 0, "stdout": "u", "stderr": ""})()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        res = await session.call_tool(
+            "create_pr",
+            {
+                "branch": "feat/test",
+                "title": "T",
+                "body": "## Summary\n\nP\u041f body.\n",
+            },
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "writing-quality validation" in payload["error"]
+    assert not calls
+
+
+async def test_merge_pr(tracker, monkeypatch):
+    calls = []
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type("P", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        res = await session.call_tool("merge_pr", {"number": 40, "method": "squash"})
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is True
+    assert calls[0][0] == "pr"
+    assert calls[0][1] == [
+        "merge",
+        "40",
+        "--squash",
+        "--delete-branch",
+        "--admin",
+    ]
+
+
+async def test_merge_pr_invalid_method(tracker, monkeypatch):
+    calls = []
+
+    def fake_gh(app, args):
+        calls.append((app, args))
+        return type("P", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+    monkeypatch.setattr(server, "_gh", fake_gh)
+    async with await _session() as session:
+        await session.initialize()
+        res = await session.call_tool("merge_pr", {"number": 40, "method": "force"})
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "invalid method" in payload["error"]
+    assert not calls
+
+
 async def test_deliver_finding(tracker):
     async with await _session() as session:
         await session.initialize()

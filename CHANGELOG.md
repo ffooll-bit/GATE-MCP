@@ -12,6 +12,7 @@
 - `reject_finding` MCP tool that sets a verified item to the workflow's `rejected` outcome with a rejection reason, mirroring `verify_finding` so rejections never require hand-editing the tracker (#31)
 - `sync_issue` MCP tool that updates the `Issue` field of a tracked item, so linking GitHub issue references to tracker items never requires hand-editing the tracker (#28)
 - `create_issue` MCP tool that builds a GitHub issue body from a verified tracker item, validates it against the writing-quality policy and creates the issue via gh, so issue writing quality is enforced by GATE-MCP (#29)
+- `create_pr` and `merge_pr` MCP tools that wrap gh pr create and gh pr merge, validating the PR body against the writing-quality policy and enforcing the merge method, so the Deliver interaction's PR steps are handled inside GATE-MCP (#32)
 
 ### Changed
 

@@ -270,6 +270,84 @@ def create_issue(item_id: str) -> dict:
 
 
 @mcp.tool()
+def create_pr(branch: str, title: str, body: str, base: str = "main") -> dict:
+    """Create a pull request; body validated against the writing-quality policy."""
+    if not title or not body.strip():
+        return {"ok": False, "error": "title and body are required"}
+    fd, raw_path = tempfile.mkstemp(suffix=".md", prefix="gate-mcp-pr-body-")
+    os.close(fd)
+    tmp = Path(raw_path)
+    try:
+        tmp.write_text(body, encoding="utf-8", newline="\n")
+        result = validate_doc_file(str(tmp))
+        errors = [f for f in result["findings"] if f["severity"] == "error"]
+        if errors:
+            return {
+                "ok": False,
+                "error": "PR body failed writing-quality validation",
+                "findings": errors,
+            }
+        proc = _gh(
+            "pr",
+            [
+                "create",
+                "--title",
+                title,
+                "--head",
+                branch,
+                "--base",
+                base,
+                "--body-file",
+                str(tmp),
+            ],
+        )
+        if proc.returncode != 0:
+            return {
+                "ok": False,
+                "error": proc.stderr.strip()
+                or f"gh pr create failed (rc {proc.returncode})",
+            }
+        return {
+            "ok": True,
+            "url": proc.stdout.strip(),
+            "message": f"PR created for {branch}",
+        }
+    except OSError as exc:
+        return {"ok": False, "error": f"body write failed: {exc}"}
+    finally:
+        try:
+            tmp.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+@mcp.tool()
+def merge_pr(number: int, method: str = "squash") -> dict:
+    """Merge a pull request via the admin bypass, enforcing the merge method.
+
+    method must be one of squash, rebase or merge. Wraps
+    gh pr merge <number> --<method> --delete-branch --admin so the agent never
+    has to recall the exact command or flag combination.
+    """
+    if method not in ("squash", "rebase", "merge"):
+        return {
+            "ok": False,
+            "error": f"invalid method {method!r}; choose squash, rebase or merge",
+        }
+    proc = _gh(
+        "pr",
+        ["merge", str(number), f"--{method}", "--delete-branch", "--admin"],
+    )
+    if proc.returncode != 0:
+        return {
+            "ok": False,
+            "error": proc.stderr.strip()
+            or f"gh pr merge failed (rc {proc.returncode})",
+        }
+    return {"ok": True, "message": f"PR {number} merged via {method}"}
+
+
+@mcp.tool()
 def sync_tracker() -> dict:
     """Validate docs/IMPROVEMENTS.md and reorder items to canonical form."""
     try:

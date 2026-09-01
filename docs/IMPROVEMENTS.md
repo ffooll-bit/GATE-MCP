@@ -239,13 +239,13 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** Server now exposes a seventh MCP tool reject_finding(item_id, rejection_reason). Agents can route a rejection through GATE-MCP instead of hand-editing docs/IMPROVEMENTS.md, closing the manual-edit gap for the workflow's rejected outcome.
 
 ### ENH-017 — Deliver interaction (PR create/merge) is not covered by GATE-MCP tools
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #32
 - **Recorded:** 2026-09-01 11:52
-- **Implemented:** `—`
+- **Implemented:** 2026-09-02 07:50
 - **Problem:** The findings-and-planning Deliver interaction (push branch, open PR to main, wait green CI, merge, cleanup) is performed entirely by hand with the gh CLI. GATE-MCP provides no tool to create or merge the PR, so the closing step of the workflow is not enforced (or validated) by GATE-MCP even though the workflow is otherwise driven by its machine-readable spec.
 - **Possible Fix:** Add optional convenience tools create_pr and merge_pr that wrap gh pr create/merge (checking the PR template, spelling, no hardwrap body) so the Deliver interaction is handled inside GATE-MCP; or explicitly document that PR/merge stays a git-workflow responsibility outside the tracker-enforcement scope of GATE-MCP.
 - **Actual Fix:** Verified by source: server.py registers five tools (record/verify/sync/archive/deliver); none creates or merges a PR. The Deliver interaction leaves fields unchanged (fields_changed: []) but its push/PR/merge/cleanup steps are all done by hand with gh. Add optional create_pr/merge_pr wrappers that enforce the PR template and body quality (English, no hardwrap), or explicitly document that PR/merge is a git-workflow responsibility outside GATE-MCP's tracker-enforcement scope.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added create_pr(branch, title, body, base) and merge_pr(number, method) MCP tools to server.py. create_pr writes the body to a temp file, validates it against the writing-quality policy (blocking on BOM, CRLF, trailing whitespace, non-Latin script), then runs gh pr create with --head/--base/--body-file through the mockable _gh helper. merge_pr validates the method against {squash, rebase, merge} then runs gh pr merge with --<method> --delete-branch --admin. Four protocol-level pytest cases cover create_pr success, create_pr body blocked, merge_pr success, and merge_pr invalid method.
+- **Changes:** Server now exposes an eleventh MCP tool. The Deliver interaction's PR create/merge steps are wrapped so the agent never hand-recalls the gh command or flags, and no PR body violating writing-quality policy is ever created. CI-green is enforced by GitHub branch protection, not duplicated in the tool.
