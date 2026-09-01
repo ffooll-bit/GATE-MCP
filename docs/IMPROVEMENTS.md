@@ -108,7 +108,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-006 — Documented `python -m gate_mcp` run command fails (no __main__.py)
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #18
 - **Recorded:** 2026-09-01 10:35
 - **Implemented:** `—`
 - **Problem:** README.md, ARCHITECTURE.md, and STRUCTURE.md all instruct running the server with `python -m gate_mcp`, but the command fails with `No module named gate_mcp.__main__` because the package has no `src/gate_mcp/__main__.py`. The working entry points are the `gate-mcp` console script or `python -c "from gate_mcp.server import main; main()"`. A user following the published README therefore cannot start the server.
@@ -120,7 +120,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-007 — No automated test coverage for the five MCP tools
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #19
 - **Recorded:** 2026-09-01 10:35
 - **Implemented:** `—`
 - **Problem:** The 14 unit tests only cover spec_loader and tracker_validator; the five MCP tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding) in server.py have no automated coverage. The end-to-end harness written during stability testing proves they work, but it lives in temp/ (gitignored) and does not run in CI, so a regression in server.py would not turn CI red.
@@ -132,7 +132,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-008 — `build/` directory from pip wheel is not gitignored
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #20
 - **Recorded:** 2026-09-01 10:35
 - **Implemented:** `—`
 - **Problem:** Running `pip wheel .` (or a source/wheel build) produces a `build/` directory, but .gitignore only ignores `__pycache__/` and `*.egg-info/`, so the build artifact appears as an untracked entry in git status and risks being committed.
