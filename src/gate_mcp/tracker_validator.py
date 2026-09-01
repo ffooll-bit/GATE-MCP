@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+REPO_ROOT = Path(
+    os.environ.get("GATE_MCP_REPO") or Path(__file__).resolve().parent.parent.parent
+)
 TRACKER = REPO_ROOT / "docs" / "IMPROVEMENTS.md"
 
 ID_RE = re.compile(r"^([A-Z]+)-(\d{3})$")

@@ -15,6 +15,7 @@
 - Install the package with dev extras in the CI test job (`pip install -e .[dev]`) so the async tool tests pick up `pytest-asyncio` (#19)
 - Track `ARCHITECTURE.md` and `STRUCTURE.md` as project design documents and gitignore the machine-local `.cortexkit/` and `.playwright-mcp/` tooling artifacts (#14)
 - Gitignore the `build/` and `dist/` directories produced by packaging (#20)
+- Support a `GATE_MCP_REPO` environment variable to override the tracker and spec locations off the package-relative default (#27)
 
 ### Fixed
 

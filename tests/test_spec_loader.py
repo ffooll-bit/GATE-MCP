@@ -1,5 +1,7 @@
 """Tests for the GAIN-Coding workflow/policy spec loader."""
 
+import importlib
+
 import pytest
 import yaml
 
@@ -45,3 +47,12 @@ def test_missing_required_key_raises(tmp_path, monkeypatch):
     monkeypatch.setattr(spec_loader, "REPO_ROOT", tmp_path)
     with pytest.raises(spec_loader.SpecError):
         spec_loader.load_workflow_spec("missingkey")
+
+
+def test_spec_env_override(monkeypatch, tmp_path):
+    """GATE_MCP_REPO redirects the specs dir off the __file__ default."""
+    monkeypatch.setenv("GATE_MCP_REPO", str(tmp_path))
+    reloaded = importlib.reload(spec_loader)
+    assert reloaded.REPO_ROOT == tmp_path
+    monkeypatch.delenv("GATE_MCP_REPO")
+    importlib.reload(spec_loader)

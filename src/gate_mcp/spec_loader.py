@@ -4,6 +4,7 @@ Specs are cached in memory for the lifetime of the server; they are treated as
 static per deployment (no runtime reloading).
 """
 
+import os
 from functools import cache
 from pathlib import Path
 
@@ -11,8 +12,10 @@ import yaml
 
 # Repo root: src/gate_mcp/spec_loader.py -> .parent=src/gate_mcp, .parent.parent=src,
 # .parent.parent.parent = repo root. This holds for editable/from-checkout installs,
-# which is how the stdio server is run for this project.
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+# which is how the stdio server is run for this project. Override with GATE_MCP_REPO.
+REPO_ROOT = Path(
+    os.environ.get("GATE_MCP_REPO") or Path(__file__).resolve().parent.parent.parent
+)
 
 
 class SpecError(Exception):
