@@ -84,7 +84,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-004 — CI does not run the Python checks (ruff and pytest)
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #13
 - **Recorded:** 2026-09-01 10:00
 - **Implemented:** `—`
 - **Problem:** The CI workflow (`.github/workflows/ci.yml`) only checks CRLF/BOM on `*.md` files; it does not run `ruff` or `pytest`. The findings-and-planning enforcement tools and their test suite are therefore only verified locally, so a Python regression would not turn CI red and the claim that the workflow "can be used without problems" has no automated safety net.
@@ -96,7 +96,7 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 
 ### ENH-005 — Decide whether untracked files are tracked or ignored
 - **Status:** `verified`
-- **Issue:** `—`
+- **Issue:** #14
 - **Recorded:** 2026-09-01 10:00
 - **Implemented:** `—`
 - **Problem:** Four untracked items pollute `git status`: `.cortexkit/` and `.playwright-mcp/` are machine-local tooling artifacts that should not be committed to the public repo, while `ARCHITECTURE.md` and `STRUCTURE.md` are project design documents that are currently untracked and, if in the repo, must reflect the implemented code rather than the "planned" state.
