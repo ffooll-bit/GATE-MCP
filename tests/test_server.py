@@ -178,6 +178,52 @@ async def test_reject_missing_item(tracker):
     assert "item not found" in payload["error"]
 
 
+async def test_sync_issue(tracker):
+    async with await _session() as session:
+        await session.initialize()
+        await session.call_tool(
+            "record_finding", {"title": "T", "problem": "P", "possible_fix": "F"}
+        )
+        res = await session.call_tool(
+            "sync_issue", {"item_id": "ENH-001", "issue": "#28"}
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is True
+    text = server.read_tracker()
+    assert "- **Issue:** #28" in text
+
+
+async def test_sync_issue_missing_item(tracker):
+    async with await _session() as session:
+        await session.initialize()
+        res = await session.call_tool(
+            "sync_issue", {"item_id": "ENH-999", "issue": "#28"}
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "item not found" in payload["error"]
+
+
+async def test_sync_issue_bad_format(tracker):
+    async with await _session() as session:
+        await session.initialize()
+        await session.call_tool(
+            "record_finding", {"title": "T", "problem": "P", "possible_fix": "F"}
+        )
+        res = await session.call_tool(
+            "sync_issue", {"item_id": "ENH-001", "issue": "28"}
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "invalid issue reference" in payload["error"]
+
+
 async def test_deliver_finding(tracker):
     async with await _session() as session:
         await session.initialize()
