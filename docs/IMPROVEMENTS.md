@@ -177,3 +177,51 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
+
+### ENH-012 — Agent edits the tracker file directly for Issue sync instead of using an MCP tool
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:40
+- **Implemented:** `—`
+- **Problem:** During Interaction 3 (Create GitHub Issues and sync), the tracker Issue fields were updated by directly editing docs/IMPROVEMENTS.md instead of through an MCP tool. GATE-MCP provides record_finding/verify_finding/deliver_finding tools, so mutating the tracker by hand is inconsistent and bypasses the project's own enforcement.
+- **Possible Fix:** Add an MCP tool (e.g. sync_issue or an extended record_finding) that updates the tracker Issue field, and require the agent to perform ALL tracker mutations through MCP tools instead of editing docs/IMPROVEMENTS.md directly.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-013 — Agent writes GitHub issue bodies directly instead of through a GATE-MCP tool
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:40
+- **Implemented:** `—`
+- **Problem:** Issue bodies for #25, #26, #27 were written manually in temp/ files and created with gh issue create --body-file. GATE-MCP provides no tool to build or validate an issue body, so the writing quality (language, hardwrap) is not controlled by GATE-MCP even though that is its purpose.
+- **Possible Fix:** Add an MCP tool (e.g. create_issue(item_id)) that builds the issue body from tracker data and validates it against core policies (International English, no hardwrap, no BOM) before creating the GitHub issue, so writing quality is enforced by GATE-MCP rather than left to the agent.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-014 — GATE-MCP does not enforce writing-quality policies (language, hardwrap)
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:40
+- **Implemented:** `—`
+- **Problem:** GATE-MCP was created to keep AGENT writing quality high and enforce 100% compliance with GAIN-CODING core policies (International English, no hardwrap). In practice the agent still occasionally produces Indonesian in public docs or hard-wraps text, and GATE-MCP does not prevent it because the validator only checks tracker format/numbering/gate rules, not language, line width, or policy rules.
+- **Possible Fix:** Add policy enforcement to GATE-MCP: a tool (e.g. validate_doc or a pre-commit check) that checks draft documents, tracker content, and PR/issue bodies against core policies (International English only, no hardwrap, no BOM, LF), so violations are caught by the tool rather than by the agent remembering the rules.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
+
+### ENH-015 — Emit clickable action links so the user can advance workflows with a mouse instead of typing
+- **Status:** `recorded`
+- **Issue:** `—`
+- **Recorded:** 2026-09-01 11:40
+- **Implemented:** `—`
+- **Problem:** The user must type yes/approve/switching commands to move between workflows, interactions, plans, and commits. To minimize keyboard use, they want to just click a link the agent provides - a link for the next interaction, approving a plan, approving a commit, switching workflows, and so on.
+- **Possible Fix:** Make the agent (alongside GATE-MCP) emit clickable action links at the end of each message - such as approve plan, approve commit, advance interaction, or switch workflow - so the user can click instead of typing. Requires confirming what deep-link/action-link affordances the host CLI (OpenCode) supports, then exposing them as labeled links.
+- **Actual Fix:** `—`
+- **Rejection Reason:** `—`
+- **Actual Implemented:** `—`
+- **Changes:** `—`
