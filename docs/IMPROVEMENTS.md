@@ -227,25 +227,25 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-016 — Toolset lacks reject_finding so the workflow's rejected outcome forces manual edits
-- **Status:** `recorded`
+- **Status:** `verified`
 - **Issue:** `—`
 - **Recorded:** 2026-09-01 11:50
 - **Implemented:** `—`
 - **Problem:** The findings-and-planning workflow (and its YAML spec) defines a rejected outcome for the Verify interaction, but the GATE-MCP toolset exposes only five tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding). There is no reject_finding tool, so changing an item to Status=rejected (e.g. ENH-015, rejected after testing clickable links in OpenChamber) forces the agent to hand-edit docs/IMPROVEMENTS.md, violating the goal of routing all tracker mutations through GATE-MCP.
 - **Possible Fix:** Add a reject_finding(item_id, rejection_reason) MCP tool that sets Status=rejected and fills Rejection Reason (mirroring verify_finding for the rejected outcome defined in the findings-and-planning workflow), so agents never have to hand-edit the tracker for a rejection. Consider a broader sync/update tool for other field corrections.
-- **Actual Fix:** `—`
+- **Actual Fix:** Verified by source: specs/workflows/findings-and-planning.yaml defines status values [recorded, verified, rejected, implemented] and the Verify interaction has a rejected outcome, but server.py registers only five tools (record/verify/sync/archive/deliver) with no reject_finding; the only sync is sync_tracker (validate+reorder). So a rejection (e.g. ENH-015) forces hand-editing the tracker. Add reject_finding(item_id, rejection_reason) that sets Status=rejected and fills Rejection Reason.
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
 
 ### ENH-017 — Deliver interaction (PR create/merge) is not covered by GATE-MCP tools
-- **Status:** `recorded`
+- **Status:** `verified`
 - **Issue:** `—`
 - **Recorded:** 2026-09-01 11:52
 - **Implemented:** `—`
 - **Problem:** The findings-and-planning Deliver interaction (push branch, open PR to main, wait green CI, merge, cleanup) is performed entirely by hand with the gh CLI. GATE-MCP provides no tool to create or merge the PR, so the closing step of the workflow is not enforced (or validated) by GATE-MCP even though the workflow is otherwise driven by its machine-readable spec.
 - **Possible Fix:** Add optional convenience tools create_pr and merge_pr that wrap gh pr create/merge (checking the PR template, spelling, no hardwrap body) so the Deliver interaction is handled inside GATE-MCP; or explicitly document that PR/merge stays a git-workflow responsibility outside the tracker-enforcement scope of GATE-MCP.
-- **Actual Fix:** `—`
+- **Actual Fix:** Verified by source: server.py registers five tools (record/verify/sync/archive/deliver); none creates or merges a PR. The Deliver interaction leaves fields unchanged (fields_changed: []) but its push/PR/merge/cleanup steps are all done by hand with gh. Add optional create_pr/merge_pr wrappers that enforce the PR template and body quality (English, no hardwrap), or explicitly document that PR/merge is a git-workflow responsibility outside GATE-MCP's tracker-enforcement scope.
 - **Rejection Reason:** `—`
 - **Actual Implemented:** `—`
 - **Changes:** `—`
