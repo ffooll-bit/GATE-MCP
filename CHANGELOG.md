@@ -9,6 +9,7 @@
 - Pytest suite for the spec loader and tracker validator (`tests/`) (#7)
 - Protocol-level pytest suite for the MCP tools (`tests/test_server.py`), exercising the five tools over the real MCP protocol against an isolated temp tracker (#19)
 - Writing-quality policy enforcement via a new `validate_doc` MCP tool (`specs/policies/writing-quality.yaml`, `policy_validator.py`) that checks BOM, line endings, trailing whitespace, non-Latin script, hardwrap and language (#30)
+- `reject_finding` MCP tool that sets a verified item to the workflow's `rejected` outcome with a rejection reason, mirroring `verify_finding` so rejections never require hand-editing the tracker (#31)
 
 ### Changed
 

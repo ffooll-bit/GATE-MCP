@@ -147,6 +147,37 @@ async def test_verify_missing_item(tracker):
     assert "item not found" in payload["error"]
 
 
+async def test_reject_finding(tracker):
+    async with await _session() as session:
+        await session.initialize()
+        await session.call_tool(
+            "record_finding", {"title": "T", "problem": "P", "possible_fix": "F"}
+        )
+        res = await session.call_tool(
+            "reject_finding", {"item_id": "ENH-001", "rejection_reason": "not viable"}
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is True
+    text = _read(tracker)
+    assert "`rejected`" in text
+    assert "- **Rejection Reason:** not viable" in text
+
+
+async def test_reject_missing_item(tracker):
+    async with await _session() as session:
+        await session.initialize()
+        res = await session.call_tool(
+            "reject_finding", {"item_id": "ENH-999", "rejection_reason": "x"}
+        )
+    import json
+
+    payload = json.loads(res.content[0].text)
+    assert payload["ok"] is False
+    assert "item not found" in payload["error"]
+
+
 async def test_deliver_finding(tracker):
     async with await _session() as session:
         await session.initialize()

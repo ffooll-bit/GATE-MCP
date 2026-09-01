@@ -227,16 +227,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** `—`
 
 ### ENH-016 — Toolset lacks reject_finding so the workflow's rejected outcome forces manual edits
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #31
 - **Recorded:** 2026-09-01 11:50
-- **Implemented:** `—`
+- **Implemented:** 2026-09-01 13:03
 - **Problem:** The findings-and-planning workflow (and its YAML spec) defines a rejected outcome for the Verify interaction, but the GATE-MCP toolset exposes only five tools (record_finding, verify_finding, sync_tracker, archive_finding, deliver_finding). There is no reject_finding tool, so changing an item to Status=rejected (e.g. ENH-015, rejected after testing clickable links in OpenChamber) forces the agent to hand-edit docs/IMPROVEMENTS.md, violating the goal of routing all tracker mutations through GATE-MCP.
 - **Possible Fix:** Add a reject_finding(item_id, rejection_reason) MCP tool that sets Status=rejected and fills Rejection Reason (mirroring verify_finding for the rejected outcome defined in the findings-and-planning workflow), so agents never have to hand-edit the tracker for a rejection. Consider a broader sync/update tool for other field corrections.
 - **Actual Fix:** Verified by source: specs/workflows/findings-and-planning.yaml defines status values [recorded, verified, rejected, implemented] and the Verify interaction has a rejected outcome, but server.py registers only five tools (record/verify/sync/archive/deliver) with no reject_finding; the only sync is sync_tracker (validate+reorder). So a rejection (e.g. ENH-015) forces hand-editing the tracker. Add reject_finding(item_id, rejection_reason) that sets Status=rejected and fills Rejection Reason.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** Added a reject_finding(item_id, rejection_reason) MCP tool to server.py that sets Status=rejected and fills Rejection Reason, mirroring verify_finding for the rejected outcome defined in the findings-and-planning workflow, plus two protocol-level pytest cases.
+- **Changes:** Server now exposes a seventh MCP tool reject_finding(item_id, rejection_reason). Agents can route a rejection through GATE-MCP instead of hand-editing docs/IMPROVEMENTS.md, closing the manual-edit gap for the workflow's rejected outcome.
 
 ### ENH-017 — Deliver interaction (PR create/merge) is not covered by GATE-MCP tools
 - **Status:** `verified`
