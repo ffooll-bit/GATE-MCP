@@ -17,16 +17,22 @@ GATE-MCP/
 │   └── archived/            # Archived tracker snapshots (gitignored)
 ├── specs/
 │   ├── policies/            # Policy YAML specs (one per policy)
+│   │   └── writing-quality.yaml
 │   └── workflows/           # Workflow YAML specs (one per workflow)
+│       └── findings-and-planning.yaml
 ├── src/
 │   └── gate_mcp/            # Python package (src layout)
 │       ├── __init__.py      # Version metadata
+│       ├── __main__.py      # Module entry point (python -m gate_mcp)
 │       ├── server.py        # MCP stdio server + tool registration
 │       ├── spec_loader.py   # YAML spec loading + validation (cached)
-│       └── tracker_validator.py  # IMPROVEMENTS.md parse/validate/rewrite
+│       ├── tracker_validator.py  # IMPROVEMENTS.md parse/validate/rewrite
+│       └── policy_validator.py   # Writing-quality policy enforcement
 ├── tests/                   # Pytest suite (co-located tests also allowed)
 │   ├── test_spec_loader.py
-│   └── test_tracker_validator.py
+│   ├── test_tracker_validator.py
+│   ├── test_policy_validator.py
+│   └── test_server.py
 ├── temp/                    # Temporary working files (gitignored)
 ├── CHANGELOG.md             # Release history
 ├── LICENSE                  # MIT license
@@ -55,17 +61,17 @@ GATE-MCP/
 **specs/:**
 - Purpose: Machine-oriented rule source for workflow enforcement
 - Contains: YAML files (one per workflow, one per policy)
-- Key files: `specs/workflows/findings-and-planning.yaml`, `specs/policies/*.yaml` (future)
+- Key files: `specs/workflows/findings-and-planning.yaml`, `specs/policies/writing-quality.yaml`
 
 **src/gate_mcp/:**
 - Purpose: Python package implementing the MCP server
 - Contains: Python modules (`.py`)
-- Key files: `src/gate_mcp/__init__.py`, `src/gate_mcp/server.py`, `src/gate_mcp/spec_loader.py`, `src/gate_mcp/tracker_validator.py`
+- Key files: `src/gate_mcp/__init__.py`, `src/gate_mcp/__main__.py`, `src/gate_mcp/server.py`, `src/gate_mcp/spec_loader.py`, `src/gate_mcp/tracker_validator.py`, `src/gate_mcp/policy_validator.py`
 
 **tests/:**
 - Purpose: Automated test suite
 - Contains: Pytest test files (`test_*.py`), fixtures
-- Key files: `tests/test_spec_loader.py`, `tests/test_tracker_validator.py`
+- Key files: `tests/test_spec_loader.py`, `tests/test_tracker_validator.py`, `tests/test_policy_validator.py`, `tests/test_server.py`
 
 **temp/:**
 - Purpose: Scratch space for local development (not committed)
@@ -74,22 +80,23 @@ GATE-MCP/
 
 ## Key File Locations
 
-**Entry Points:** `src/gate_mcp/server.py:main()` — MCP stdio server bootstrap
+**Entry Points:** `src/gate_mcp/server.py:main()` — MCP stdio server bootstrap; `src/gate_mcp/__main__.py` — module entry point
 
 **Configuration:** `pyproject.toml` — Build system, dependencies, entry points, package discovery
 
 **Core Logic:**
-- `src/gate_mcp/server.py` — FastMCP instance, 5 MCP tools (`record_finding`, `verify_finding`, `sync_tracker`, `archive_finding`, `deliver_finding`)
-- `src/gate_mcp/spec_loader.py` — `load_workflow_spec`, `load_policy_spec` (cached via `functools.cache`)
-- `src/gate_mcp/tracker_validator.py` — `parse_tracker`, `validate_format`, `validate_numbering`, `validate_gate_rules`, `validate_tracker`, `read_tracker`, `write_tracker`
+- `src/gate_mcp/server.py` — FastMCP instance, 10 MCP tools (`record_finding`, `verify_finding`, `reject_finding`, `sync_issue`, `create_issue`, `create_pr`, `merge_pr`, `sync_tracker`, `archive_finding`, `deliver_finding`, `validate_doc`)
+- `src/gate_mcp/spec_loader.py` — `load_workflow_spec`, `load_policy_spec` (cached via `functools.cache`); `GATE_MCP_REPO` env override
+- `src/gate_mcp/tracker_validator.py` — `parse_tracker`, `validate_format`, `validate_numbering`, `validate_gate_rules`, `validate_tracker`, `read_tracker`, `write_tracker`; `GATE_MCP_REPO` env override
+- `src/gate_mcp/policy_validator.py` — `validate_doc(path, policy_name?)`; enforces writing-quality policy (BOM, CRLF, trailing whitespace, hardwrap, language)
 
 **Tracker Source:** `docs/IMPROVEMENTS.md` — Canonical findings tracker (validated by server tools)
 
 **Workflow Specs:** `specs/workflows/` — YAML specs driving enforcement (one file per workflow)
 
-**Policy Specs:** `specs/policies/` — YAML specs for cross-cutting policies (one file per policy)
+**Policy Specs:** `specs/policies/` — YAML specs for cross-cutting policies (one file per policy); currently `writing-quality.yaml`
 
-**Tests:** `tests/` — Pytest suite; `tests/test_spec_loader.py`, `tests/test_tracker_validator.py`; co-located `src/gate_mcp/test_*.py` also accepted
+**Tests:** `tests/` — Pytest suite; `tests/test_spec_loader.py`, `tests/test_tracker_validator.py`, `tests/test_policy_validator.py`, `tests/test_server.py`; co-located `src/gate_mcp/test_*.py` also accepted
 
 ## Naming Conventions
 
@@ -109,11 +116,13 @@ GATE-MCP/
 
 **New workflow spec:** `specs/workflows/<workflow-name>.yaml` — mirror GAIN-Coding workflow structure
 
-**New policy spec:** `specs/policies/<policy-name>.yaml` — declarative rules referenced by workflows
+**New policy spec:** `specs/policies/<policy-name>.yaml` — declarative rules referenced by workflows or tools
 
 **Spec loader module:** `src/gate_mcp/spec_loader.py` — YAML loading, validation, caching (extend for new spec types)
 
 **Tracker validator module:** `src/gate_mcp/tracker_validator.py` — Format, numbering, gate rule validation (extend for new rules)
+
+**Policy validator module:** `src/gate_mcp/policy_validator.py` — Document policy checks (extend for new policy rules)
 
 **Shared utilities:** `src/gate_mcp/shared/` (create if needed) — Common helpers, constants, exceptions
 
