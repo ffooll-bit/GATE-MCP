@@ -47,6 +47,23 @@ GATE_MCP_REPO=/path/to/gate-mcp gate-mcp
 
 Without a repo checkout or `GATE_MCP_REPO`, a standalone `pip install` can start the server and list the tools, but the workflow tools will fail to locate the specs and tracker.
 
+### Known limitation: Windows stdio first response
+
+On Windows with Python 3.13, the first MCP tool call immediately after `initialize()` over stdio can intermittently return an empty content node. This is a transport framing characteristic of the MCP SDK on the Windows Proactor event loop, not a server logic defect. The server now installs the Selector event loop on Windows (`WindowsSelectorEventLoopPolicy`) to avoid that scheduling path, which reduces the likelihood, but does not guarantee it can never occur.
+
+Third-party MCP client authors should tolerate an empty first response and retry:
+
+```python
+async def call_with_retry(session, name, arguments, retries=3, delay=0.3):
+    for attempt in range(retries):
+        result = await session.call_tool(name, arguments)
+        text = result.content[0].text if result.content else ""
+        if text:
+            return result
+        await asyncio.sleep(delay)
+    return result
+```
+
 ## Documentation
 
 - [CHANGELOG.md](CHANGELOG.md) — release history

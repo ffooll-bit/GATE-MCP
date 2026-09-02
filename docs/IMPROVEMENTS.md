@@ -155,16 +155,16 @@ Item IDs follow the format `<LABEL_CODE>-<NNN>` built from the default GitHub la
 - **Changes:** README.md gained a "Standalone vs. repo-checkout operation" section documenting that workflow tools resolve specs/ and docs/IMPROVEMENTS.md from a repo checkout or via `GATE_MCP_REPO`; no source or packaging changes, so the wheel keeps not bundling specs as a deliberate, documented limitation.
 
 ### ENH-010 — First MCP stdio tool call can intermittently return an empty content node on Windows
-- **Status:** `verified`
+- **Status:** `implemented`
 - **Issue:** #26
 - **Recorded:** 2026-09-01 11:30
-- **Implemented:** `—`
+- **Implemented:** 2026-09-02 08:01
 - **Problem:** On Windows (Python 3.13 + anyio), the first MCP tool call immediately after initialize() over stdio can intermittently return an empty content node, so json.loads on content[0].text fails. The harness needed a 3x retry with a short sleep to obtain valid JSON responses. Not a server logic defect, but flaky transport framing that real MCP clients without retry could observe as an occasional empty first response.
 - **Possible Fix:** Add a small retry on the first tool call in non-editable client harnesses, or harden the server so the first stdio tool call never returns an empty content node when the underlying write races; document the workaround for third-party MCP clients.
 - **Actual Fix:** Verified by repeated stdio runs on Windows Python 3.13: the first tool call after initialize() intermittently returned an empty content node so json.loads failed, and was recovered by a 3x retry with a short sleep. This is transport framing flakiness, not a server logic defect. Fix: harden the server so the first stdio tool call never returns an empty content node, or document the retry workaround for third-party MCP clients.
 - **Rejection Reason:** `—`
-- **Actual Implemented:** `—`
-- **Changes:** `—`
+- **Actual Implemented:** main() now calls _install_windows_selector_loop() to switch Windows asyncio to the Selector event loop before starting the stdio transport, avoiding the Proactor scheduling path implicated in the intermittent empty-first-response. The README documents the known limitation and provides a verified client-side retry pattern for third-party MCP clients. Two deterministic tests cover the policy installation (Windows) and no-op off Windows; 46 tests pass.
+- **Changes:** Server on Windows now installs WindowsSelectorEventLoopPolicy before mcp.run(). README gains a Known limitation section with a retry snippet for client authors. Honest framing: reduces likelihood, does not guarantee elimination - clients are still advised to retry an empty first response.
 
 ### ENH-011 — TRACKER path is hardcoded from __file__ with no environment override
 - **Status:** `implemented`
