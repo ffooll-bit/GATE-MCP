@@ -411,6 +411,25 @@ async def test_merge_pr_invalid_method(tracker, monkeypatch):
     assert not calls
 
 
+def test_windows_selector_policy_applied(monkeypatch):
+    import asyncio
+
+    if not hasattr(asyncio, "WindowsSelectorEventLoopPolicy"):
+        return
+    set_calls = []
+    monkeypatch.setattr(server.sys, "platform", "win32")
+    monkeypatch.setattr(asyncio, "set_event_loop_policy", lambda p: set_calls.append(p))
+    assert server._install_windows_selector_loop() is True
+    assert set_calls and isinstance(
+        set_calls[0], asyncio.WindowsSelectorEventLoopPolicy
+    )
+
+
+def test_selector_policy_off_windows(monkeypatch):
+    monkeypatch.setattr(server.sys, "platform", "linux")
+    assert server._install_windows_selector_loop() is False
+
+
 async def test_deliver_finding(tracker):
     async with await _session() as session:
         await session.initialize()

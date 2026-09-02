@@ -10,6 +10,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -478,7 +479,24 @@ def validate_doc(path: str) -> dict:
         }
 
 
+def _install_windows_selector_loop() -> bool:
+    """Switch Windows asyncio to the Selector event loop.
+
+    Windows Python 3.13 defaults to the ProactorEventLoop, under which the MCP
+    stdio transport (anyio) can intermittently emit an empty first response.
+    The Selector loop avoids that Proactor scheduling path. Returns True when
+    the policy was applied, False off-Windows.
+    """
+    if sys.platform != "win32":
+        return False
+    import asyncio
+
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    return True
+
+
 def main() -> None:
+    _install_windows_selector_loop()
     mcp.run()
 
 
